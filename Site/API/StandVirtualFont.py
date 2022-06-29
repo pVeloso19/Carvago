@@ -1,7 +1,10 @@
+import re
 from bs4 import BeautifulSoup
 
 import ssl
 import requests
+
+from Carros.Carro import Carro
 
 class StandVirtualGather:
 
@@ -57,6 +60,24 @@ class StandVirtualGather:
 
             id = soup.find_all(id="ad_id")[0].contents[0].strip()
             res['ID'] = id
+            res['PRECO'] = 10
+            res['Link_foto'] = 'temp'
+            res['Titulo'] = 'temp'
+            res['Link_anuncio'] = link
+
+            res['Anunciante'] = ''
+            res['Marca'] = ''
+            res['Versão'] = ''
+            res['Combustível'] = ''
+            res['Mês de Registo'] = ''
+            res['Ano'] = 0 
+            res['Cor'] = ''
+            res['Tipo de cor'] = ''
+            res['Tipo de Caixa'] = ''            
+            res['Número de Mudanças'] = '' 
+            res['Nº de portas'] = 0
+            res['Origem'] = ''
+            res['Condição'] = ''
 
             for li in temp1:
                 
@@ -73,7 +94,21 @@ class StandVirtualGather:
 
             temp3.append(res)
 
-        return temp3
+
+        carros = []
+        for c in temp3:
+            
+            quilometros = int(re.sub('[a-zA-Z].*', '', c['Quilómetros']).strip().replace(" ",""))
+            cilindrada = int(re.sub('[a-zA-Z].*', '', c['Cilindrada']).strip().replace(" ",""))
+            potencia = int(re.sub('[a-zA-Z].*', '', c['Potência']).strip().replace(" ",""))
+
+            carro = Carro( int(c['ID']), c['Anunciante'], c['Marca'], c['Modelo'], c['Versão'], c['Combustível'], c['Mês de Registo'], 
+                           int(c['Ano']), quilometros, cilindrada, potencia, c['Cor'], c['Tipo de cor'], c['Tipo de Caixa'],
+                           int(c['Nº de portas']), c['Origem'], c['Condição'], float(c['PRECO']), c['Link_foto'], c['Titulo'],
+                           c['Link_anuncio'] )
+            carros.append(carro)
+
+        return carros
 
 
 #file1 = open("temp.html", "w", encoding='utf-8') 

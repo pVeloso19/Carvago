@@ -18,7 +18,7 @@ USE `carvago` ;
 -- Table `carvago`.`User`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `carvago`.`User` (
-  `idUser` INT NOT NULL,
+  `idUser` INT NOT NULL AUTO_INCREMENT,
   `Nome` VARCHAR(45) NULL,
   `Email` VARCHAR(255) NOT NULL,
   `Password` VARCHAR(45) NOT NULL,
@@ -54,7 +54,7 @@ ENGINE = InnoDB;
 -- Table `carvago`.`Carros`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `carvago`.`Carros` (
-  `idCarros` INT NOT NULL,
+  `idCarros` BIGINT(15) NOT NULL,
   `Anunciante` VARCHAR(45) NULL,
   `Marca` VARCHAR(45) NOT NULL,
   `Modelo` VARCHAR(45) NOT NULL,
@@ -72,6 +72,9 @@ CREATE TABLE IF NOT EXISTS `carvago`.`Carros` (
   `Origem` VARCHAR(45) NULL,
   `Condicao` VARCHAR(45) NULL,
   `Preco` DOUBLE NOT NULL,
+  `Link_foto` VARCHAR(255) NULL,
+  `Titulo` VARCHAR(45) NULL,
+  `Link_anuncio` VARCHAR(255) NOT NULL,
   PRIMARY KEY (`idCarros`))
 ENGINE = InnoDB;
 
