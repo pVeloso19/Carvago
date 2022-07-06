@@ -5,13 +5,14 @@ import ssl
 import requests
 
 from Carros.Carro import Carro
+from BaseDados.CarrosDAO import CarrosDAO
 
 class StandVirtualGather:
 
     def __init__(self):
         pass
 
-    def getDados(self, marca = 'ford', modelo = 'focus') -> dict:
+    def __getDados(self, marca = 'ford', modelo = 'focus') -> (dict and list):
         
         ssl._create_default_https_context = ssl._create_unverified_context
         result = requests.request("GET", f"https://www.standvirtual.com/carros/{marca}/{modelo}")
@@ -60,9 +61,9 @@ class StandVirtualGather:
 
             id = soup.find_all(id="ad_id")[0].contents[0].strip()
             res['ID'] = id
-            res['PRECO'] = 10
-            res['Link_foto'] = 'temp'
-            res['Titulo'] = 'temp'
+            res['PRECO'] = 10                                                   # Falta
+            res['Link_foto'] = ['temp', 'temp2']                                              # Falta
+            res['Titulo'] = 'temp'                                                   # Falta
             res['Link_anuncio'] = link
 
             res['Anunciante'] = ''
@@ -95,21 +96,71 @@ class StandVirtualGather:
             temp3.append(res)
 
 
-        carros = []
+        carros = {}
+        lista_carros = []
         for c in temp3:
             
             quilometros = int(re.sub('[a-zA-Z].*', '', c['Quilómetros']).strip().replace(" ",""))
             cilindrada = int(re.sub('[a-zA-Z].*', '', c['Cilindrada']).strip().replace(" ",""))
             potencia = int(re.sub('[a-zA-Z].*', '', c['Potência']).strip().replace(" ",""))
 
-            carro = Carro( int(c['ID']), c['Anunciante'], c['Marca'], c['Modelo'], c['Versão'], c['Combustível'], c['Mês de Registo'], 
+            link_foto = ''
+            i = 0
+            while (i < len(c['Link_foto']) ):
+                link_foto += c['Link_foto'][i]
+                i+=1
+                if(i < (len(c['Link_foto'])) ):
+                    link_foto += ' '
+
+            carro = Carro( c['Anunciante'], c['Marca'], c['Modelo'], c['Versão'], c['Combustível'], c['Mês de Registo'], 
                            int(c['Ano']), quilometros, cilindrada, potencia, c['Cor'], c['Tipo de cor'], c['Tipo de Caixa'],
-                           int(c['Nº de portas']), c['Origem'], c['Condição'], float(c['PRECO']), c['Link_foto'], c['Titulo'],
-                           c['Link_anuncio'] )
-            carros.append(carro)
+                           int(c['Nº de portas']), c['Origem'], c['Condição'], float(c['PRECO']), link_foto, c['Titulo'],
+                           c['Link_anuncio'], int(c['ID']), 'stand-virtual')
+            carros[carro.getIDAnuncio()] = carro
+            lista_carros.append(carro)
+        
+        return (carros, lista_carros)
+    
+    def getDados(self, marcas_modelos = []) -> (list and list):
 
-        return carros
+        carrosDAO = CarrosDAO.instance()
 
+        lista_carros_novos = []
+        lista_id_carros_vendidos = []
+        
+        for marca, modelo in marcas_modelos:
+            dados_dict, dados_list = self.__getDados(marca=marca, modelo=modelo)
+
+            lista_ids_existentes = carrosDAO.getAllIDAnuncioCarrosByMarcaANDModeloANDFonte(marca, modelo, 'stand-virtual')
+
+            # verifica novos carros
+            for carro in dados_list:
+                id = carro.getIDAnuncio()
+                if(id not in lista_ids_existentes):
+
+                    #Insere o carro que não existia na Base de Dados
+                    id_carro = carrosDAO.insertCarro(carro)
+
+                    #Define o ID do carro para o id que se inseriu na Base de Dados
+                    carro.setID(id_carro)
+                    
+                    #Adiciona o carro à lista para notificar
+                    lista_carros_novos.append(carro)
+
+                    #Povoar a tabela de Carros_Nao_Vistos
+                    carrosDAO.insertCarrosNaoVisto(id_carro, carro)
+
+            # verifica se existem carros que foram vendidos
+            for id in lista_ids_existentes:
+                if(id not in dados_dict):
+                    carrosDAO.deleteCarroByIDAnuncioANDFonte(id, 'stand-virtual')
+                    lista_id_carros_vendidos.append(id)
+
+            #Atualiza os dados dos carros na base de dados
+            for carro in dados_list:
+                carrosDAO.updateCarroByIDAnuncioANDFonte(carro)
+
+        return (lista_carros_novos, lista_id_carros_vendidos)
 
 #file1 = open("temp.html", "w", encoding='utf-8') 
 #file1.write(html_doc)

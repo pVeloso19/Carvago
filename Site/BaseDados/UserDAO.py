@@ -1,6 +1,6 @@
-from matplotlib.pyplot import connect
-from mysql.connector import connection
-from DBConexao import connectToDB
+from BaseDados.DBConexao import connectToDB
+
+from Users.Interesse import Interesse
 from Users.User import User
 
 
@@ -14,52 +14,122 @@ class UserDAO:
             user.__instance = user()
         return user.__instance
 
-    def checkUser(self, user: User) -> int:
+    def getUserByEmail(self, email: str) -> User:
         _, cursor = connectToDB()
 
-        email = user.getEmail()
-        password = user.getPassword()
-
-        if (email != -1 and password != -1):
-            query = """
-                        SELECT email FROM User where email = '%s';
-                    """ % (email)
+        query = """
+            SELECT * FROM carvago.User 
+                where email = '%s';
+        """ % (email)
+            
+        try:
             cursor.execute(query)
-            result = cursor.fetchone()[0]
+            result = cursor.fetchone()
 
-            if result < 0:
-                return -2  # email não existe
-            else:
-                queryPass = """
-                                SELECT password FROM User where email = '%s';
-                            """ % (email)
-                cursor.execute(queryPass)
-                res = cursor.fetchone()[0]
+            id = int(result[0])
+            nome = result[1]
+            email = result[2]
+            password = result[3]
 
-                if (res == password):
-                    return 1  # user existe
-                else:
-                    return -2  # password não coincide
+            return User(id, nome, email, password)
+        except:
+            return None
+    
+    def register(self, user: User) -> int:
+        
+        connection, cursor = connectToDB()
+        
+        # falta verificar se o user já existe
+        existe = False
+
+        if ( (not existe) and user.getIdUser() <= 0):
+            
+            query = """
+                INSERT INTO carvago.User
+                    VALUES 
+                        (default, %s, '%s', '%s');
+            """ % (user.getNome(), user.getEmail(), user.getPassword())
+
+            cursor.execute(query)
+            connection.commit()
+
+            query = """
+                SELECT LAST_INSERT_ID();
+            """
+
+            cursor.execute(query)
+            r = cursor.fetchone()
+
+            return int(r[0])
+
         else:
-            return -3  # algum campo vem vazio
+            return user.getIdUser()
 
-    def put(self, user: User) -> int:
+    def getInteressesUser(self, id_user: int) -> list:
+        _, cursor = connectToDB()
+
+        query = """
+            SELECT * FROM carvago.Interesse
+	            WHERE User_idUser = %s;
+        """ % (str(id_user))
+            
+        cursor.execute(query)
+
+        interesses = []
+        for r in cursor:
+            
+            id_user = int(r[0])
+            marca = r[1]
+            modelo = r[2]
+            fonte = r[3]
+
+            i = Interesse(marca, modelo, fonte, id_user)
+
+            interesses.append(i)
+        
+        return interesses
+    
+    def getALLInteresses(self) -> list:
+        _, cursor = connectToDB()
+
+        query = """
+            SELECT distinct Marca, Modelo, Fonte FROM carvago.Interesse;
+        """
+            
+        cursor.execute(query)
+
+        interesses = []
+        for r in cursor:
+            
+            marca = r[0]
+            modelo = r[1]
+            fonte = r[2]
+
+            i = Interesse(marca, modelo, fonte)
+
+            interesses.append(i)
+        
+        return interesses
+
+    def adicionarCarroFavorito(self, id_user : int, id_carro : int):
         connection, cursor = connectToDB()
 
-        # falta verificar se o user já existe
+        query = """
+            INSERT INTO Favorito
+	            VALUES 
+                    (%s, %s);
+        """ % (str(id_user), str(id_carro))
 
-        if (user.getIdUser() == -1):
-            query = """
-                        INSERT INTO User (Nome, Email, Password)
-                        VALUES (%s, %s, %s);
-                    """
-            values = (user.getNome, user.getEmail, user.getPassword)
+        cursor.execute(query)
+        connection.commit()
+    
+    def removeCarroFavorito(self, id_user : int, id_carro : int):
+        connection, cursor = connectToDB()
 
-            try:
-                cursor.execute(query, values)
-                connection.commit()
-            except:
-                return -1
+        query = """
+            DELETE FROM carvago.Favorito
+	            WHERE User_idUser = %s and Carros_idCarros = %s;
+        """ % (str(id_user), str(id_carro))
 
-        else:
-            return -1
+        cursor.execute(query)
+        connection.commit()
