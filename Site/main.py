@@ -1,3 +1,4 @@
+
 from flask import Flask, request, jsonify, render_template
 
 from Carros.CarrosFacade import CarrosFacade
@@ -92,9 +93,11 @@ class REST_API:
 
 
 from API.StandVirtualFont import StandVirtualGather
+from API.OlxFont import OLXGather
 
 #Inicia todas as fontes
 stand_virtual = StandVirtualGather()
+olx = OLXGather()
 
 #Obtem todos os interesses para cada fonte
 userFacade = UserFacade()
@@ -108,17 +111,19 @@ for fonte, interesses in fontes.items():
         novos, vendidos = stand_virtual.getDados(interesses)
         carros_novos.extend(novos)
         id_carros_vendidos.extend(vendidos)
+    elif( fonte == 'olx'):
+        novos, vendidos = olx.getDados(interesses)
+        carros_novos.extend(novos)
+        id_carros_vendidos.extend(vendidos)
 
 #Faz algo com os carros novos
-print('novos = [')
+print('novos = [', end=' ,')
 for carro in carros_novos:
     print(carro.getID(), end=' ,')
 print(']\n')
 
 # faz algo com os carros que foram vendidos
 print("vendidos = "+str(id_carros_vendidos) )
-
-
 
 
 # Executa a função main

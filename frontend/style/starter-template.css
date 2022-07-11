@@ -1,0 +1,26 @@
+body {
+  padding-top: 50px;
+}
+.starter-template {
+  padding: 40px 15px;
+  text-align: center;
+}
+
+select{
+  margin-top: 10px;
+}
+
+.tabelaFiltro{
+  margin-top: 20px;
+}
+
+h1 {
+  margin-bottom: 20px;
+}
+
+.Footer{
+  padding: 5px;
+  background-color: lightgray;
+  margin-top: 10px;
+}
+
