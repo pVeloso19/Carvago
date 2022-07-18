@@ -59,7 +59,7 @@ class StandVirtualGather:
 
             res['ID'] = soup.find_all(id="ad_id")[0].contents[0].strip()
             res['PRECO'] = soup.find_all('span','offer-price__number')[0].contents[0].strip().replace(" ","")
-            res['Link_foto'] = []                                              # Falta
+            res['Link_foto'] = []
             res['Titulo'] = soup.find_all('h1','offer-title big-text')[0].contents[2].strip()
             res['Link_anuncio'] = link
 

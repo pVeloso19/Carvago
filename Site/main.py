@@ -27,7 +27,10 @@ class REST_API:
             
             res = self.__userFacade.login(email, password)
 
-            return jsonify(dict( resultado = res))
+            response = jsonify(dict( resultado = res))
+            response.headers.add('Access-Control-Allow-Origin', '*')
+
+            return response
         
         @self.app.route('/InteressesUser', methods=['GET']) 
         def getInteresses():
@@ -36,7 +39,10 @@ class REST_API:
             
             res = self.__userFacade.getInteressesUser(id_user)
 
-            return jsonify(res)
+            response = jsonify(res)
+            response.headers.add('Access-Control-Allow-Origin', '*')
+
+            return response
         
         @self.app.route('/AllCars', methods=['GET']) 
         def getAllCarsByTarget():
@@ -47,7 +53,10 @@ class REST_API:
             
             res = self.__carrosFacade.getTodosCarrosPorInteresse(id_user, marca, modelo)
 
-            return jsonify(dict( carros = res))
+            response = jsonify(dict( carros = res))
+            response.headers.add('Access-Control-Allow-Origin', '*')
+
+            return response
         
         @self.app.route('/AllCarsNotSee', methods=['GET']) 
         def getAllCarsNotSee():
@@ -56,7 +65,10 @@ class REST_API:
             
             res = self.__carrosFacade.getTodosCarrosNaoVistos(id_user)
             
-            return jsonify(dict( carros = res))
+            response = jsonify(dict( carros = res))
+            response.headers.add('Access-Control-Allow-Origin', '*')
+
+            return response
         
         @self.app.route('/AllFavoriteCars', methods=['GET']) 
         def getAllFavoriteCars():
@@ -65,7 +77,10 @@ class REST_API:
             
             res = self.__carrosFacade.getTodosCarrosFavoritos(id_user)
             
-            return jsonify(dict( carros = res))
+            response = jsonify(dict( carros = res))
+            response.headers.add('Access-Control-Allow-Origin', '*')
+
+            return response
         
         @self.app.route('/AddFavorito', methods=['GET']) 
         def addFavorito():
@@ -75,7 +90,10 @@ class REST_API:
             
             res = self.__userFacade.addFavorito(id_user, id_carro)
             
-            return jsonify(dict( resultado = res))
+            response = jsonify(dict( resultado = res))
+            response.headers.add('Access-Control-Allow-Origin', '*')
+
+            return response
         
         @self.app.route('/RemoveFavorito', methods=['GET']) 
         def removeFavorito():
@@ -85,13 +103,16 @@ class REST_API:
             
             res = self.__userFacade.removeFavorito(id_user, id_carro)
             
-            return jsonify(dict( resultado = res))
+            response = jsonify(dict( resultado = res))
+            response.headers.add('Access-Control-Allow-Origin', '*')
+
+            return response
 
 
-#rest_api = REST_API()
-#rest_api.init()
+rest_api = REST_API()
+rest_api.init()
 
-
+"""
 from API.StandVirtualFont import StandVirtualGather
 from API.OlxFont import OLXGather
 
@@ -124,7 +145,7 @@ print(']\n')
 
 # faz algo com os carros que foram vendidos
 print("vendidos = "+str(id_carros_vendidos) )
-
+"""
 
 # Executa a função main
 """
