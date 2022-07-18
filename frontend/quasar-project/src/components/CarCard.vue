@@ -33,7 +33,7 @@
         <p class="IconSparate">♦</p>
         <p class="CombustivelDetalhe">{{Combustivel}}</p>
         <p class="IconSparate">♦</p>
-        <p class="QuilometrosDetalhe">{{Quilometros}} km</p>
+        <p class="QuilometrosDetalhe">{{QuilometrosString()}} km</p>
         <p class="IconSparate">♦</p>
         <p class="AnoDetalhe">{{Ano}}</p>
         <p class="IconSparate">♦</p>
@@ -42,7 +42,7 @@
     </div>
 
     <div class="Informacoes2">
-      <p class="text-center Preco">{{Preco}} EUR</p>
+      <p class="text-center Preco">{{PrecoString()}} EUR</p>
     </div>
 
     <div class="Botoes">
@@ -151,7 +151,7 @@
             <p class="val">{{Combustivel}}</p>
             <p class="val">{{Mes_Registo}}</p>
             <p class="val">{{Ano}}</p>
-            <p class="val">{{Quilometros}} km</p>
+            <p class="val">{{QuilometrosString()}} km</p>
             <p class="val">{{Cilindrada}} cm3</p>
             <p class="val">{{Potencia}} cv</p>
             <p class="val">{{Cor}}</p>
@@ -160,7 +160,7 @@
             <p class="val">{{Num_Portas}}</p>
             <p class="val">{{Origem}}</p>
             <p class="val">{{Condicao}}</p>
-            <p class="val">{{Preco}} €</p>
+            <p class="val">{{PrecoString()}} €</p>
             <p class="val">{{Fonte}}</p>
           </div>
         </q-card-section>
@@ -212,8 +212,8 @@ export default defineComponent({
     },
 
     Quilometros: {
-      type: String,
-      default: ''
+      type: Number,
+      default: 0
     },
 
     Cilindrada: {
@@ -257,8 +257,8 @@ export default defineComponent({
     },
 
     Preco: {
-      type: String,
-      default: ''
+      type: Number,
+      default: 0
     },
 
     Links_foto: {
@@ -281,9 +281,22 @@ export default defineComponent({
       default: ''
     }
   },
+
   setup () {
     const openNewTab = (link) => {
       window.open(link, '_blank')
+    }
+
+    function PrecoString () {
+      let teste = this.Preco.toString()
+      teste = teste.replace(new RegExp('^(\\d{' + (teste.length % 3 ? teste.length % 3 : 0) + '})(\\d{3})', 'g'), '$1 $2').replace(/(\d{3})+?/gi, '$1 ').trim()
+      return teste
+    }
+
+    function QuilometrosString () {
+      let teste = this.Quilometros.toString()
+      teste = teste.replace(new RegExp('^(\\d{' + (teste.length % 3 ? teste.length % 3 : 0) + '})(\\d{3})', 'g'), '$1 $2').replace(/(\d{3})+?/gi, '$1 ').trim()
+      return teste
     }
 
     return {
@@ -293,7 +306,10 @@ export default defineComponent({
       autoplay: ref(true),
       carousel: ref(false),
       slide2: ref(1),
-      favorite: ref(false)
+      favorite: ref(false),
+
+      QuilometrosString,
+      PrecoString
     }
   }
 })

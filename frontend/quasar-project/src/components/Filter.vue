@@ -3,7 +3,7 @@
     <div class="Filtros grid-container">
         <q-select
           filled
-          v-model="modelMarca"
+          v-model="marca"
           use-input
           :options="MarcaOptions"
           @filter="filterFnMarca"
@@ -30,7 +30,7 @@
 
         <q-select
           filled
-          v-model="modelModelo"
+          v-model="modelo"
           use-input
           input-debounce="0"
           label="Modelo"
@@ -52,7 +52,7 @@
         </q-select>
 
         <q-input
-          v-model.number="ModelPrecoMin"
+          v-model.number="precoMin"
           type="number"
           label="Preço de"
           filled
@@ -62,7 +62,7 @@
         />
 
         <q-input
-          v-model.number="ModelPrecoMax"
+          v-model.number="precoMax"
           type="number"
           label="Preço até"
           filled
@@ -72,7 +72,7 @@
         />
 
         <q-input
-          v-model.number="ModelAnoMin"
+          v-model.number="anoMin"
           type="number"
           label="Ano de"
           filled
@@ -82,7 +82,7 @@
         />
 
         <q-input
-          v-model.number="ModelAnoMax"
+          v-model.number="anoMax"
           type="number"
           label="Ano até"
           filled
@@ -93,7 +93,7 @@
 
         <q-select
           filled
-          v-model="modelCombustivel"
+          v-model="combustivel"
           :options="stringCombustiveis"
           label="Combustível"
           multiple
@@ -117,7 +117,7 @@
         </q-select>
 
         <q-input
-          v-model.number="ModelQuilometrosMin"
+          v-model.number="quilometroMin"
           type="number"
           label="Quilómetros de"
           filled
@@ -127,7 +127,7 @@
         />
 
         <q-input
-          v-model.number="ModelQuilometrosMax"
+          v-model.number="quilometroMax"
           type="number"
           label="Quilómetros até"
           filled
@@ -142,12 +142,13 @@
       <p class="OrderTitle">Ordenar por</p>
       <q-select
           filled
-          v-model="modelOrdem"
+          v-model="ordem"
           :options="OrdemOptions"
           behavior="menu"
           class="Order"
           bg-color='white'
           label-color='black'
+          @update:model-value="val => $emit('Ordena', val)"
         />
     </div>
   </div>
@@ -203,117 +204,147 @@ function filterFnModelo (val, update) {
 const MarcaOptions = ref(stringMarcas)
 const ModeloOptions = ref(stringModelo)
 
-const modelMarca = ref([])
-const modelCombustivel = ref([])
-const modelModelo = ref(null)
-const ModelPrecoMin = ref(null)
-const ModelPrecoMax = ref(null)
-const ModelAnoMin = ref(null)
-const ModelAnoMax = ref(null)
-const ModelQuilometrosMin = ref(null)
-const ModelQuilometrosMax = ref(null)
-const modelOrdem = ref('Mais Recentes')
-
 export default defineComponent({
   name: 'FilterComponent',
+
+  props: {
+    modelMarca: {
+      type: Array,
+      default: () => []
+    },
+
+    modelCombustivel: {
+      type: Array,
+      default: () => []
+    },
+
+    modelModelo: {
+      type: String,
+      default: null
+    },
+
+    ModelPrecoMin: {
+      type: Number,
+      default: null
+    },
+
+    ModelPrecoMax: {
+      type: Number,
+      default: null
+    },
+
+    ModelAnoMin: {
+      type: Number,
+      default: null
+    },
+    ModelAnoMax: {
+      type: Number,
+      default: null
+    },
+
+    ModelQuilometrosMin: {
+      type: Number,
+      default: null
+    },
+
+    ModelQuilometrosMax: {
+      type: Number,
+      default: null
+    },
+
+    modelOrdem: {
+      type: String,
+      default: 'Mais Recentes'
+    }
+  },
 
   computed: {
     marca: {
       get () {
-        return modelMarca.value
+        return this.modelMarca
       },
       set (testeTemp) {
-        modelMarca.value = testeTemp
         this.$emit('updateMarca', testeTemp)
       }
     },
 
     combustivel: {
       get () {
-        return modelCombustivel.value
+        return this.modelCombustivel
       },
       set (testeTemp) {
-        modelCombustivel.value = testeTemp
         this.$emit('updateCombustivel', testeTemp)
       }
     },
 
     modelo: {
       get () {
-        return modelModelo.value
+        return this.modelModelo
       },
       set (testeTemp) {
-        modelModelo.value = testeTemp
         this.$emit('updateModelo', testeTemp)
       }
     },
 
     precoMin: {
       get () {
-        return ModelPrecoMin.value
+        return this.ModelPrecoMin
       },
       set (testeTemp) {
-        ModelPrecoMin.value = testeTemp
         this.$emit('updatePrecoMin', testeTemp)
       }
     },
 
     precoMax: {
       get () {
-        return ModelPrecoMax.value
+        return this.ModelPrecoMax
       },
       set (testeTemp) {
-        ModelPrecoMax.value = testeTemp
         this.$emit('updatePrecoMax', testeTemp)
       }
     },
 
     anoMin: {
       get () {
-        return ModelAnoMin.value
+        return this.ModelAnoMin
       },
       set (testeTemp) {
-        ModelAnoMin.value = testeTemp
         this.$emit('updateAnoMin', testeTemp)
       }
     },
 
     anoMax: {
       get () {
-        return ModelAnoMax.value
+        return this.ModelAnoMax
       },
       set (testeTemp) {
-        ModelAnoMax.value = testeTemp
         this.$emit('updateAnoMax', testeTemp)
       }
     },
 
     quilometroMin: {
       get () {
-        return ModelQuilometrosMin.value
+        return this.ModelQuilometrosMin
       },
       set (testeTemp) {
-        ModelQuilometrosMin.value = testeTemp
         this.$emit('updateQuilometroMin', testeTemp)
       }
     },
 
     quilometroMax: {
       get () {
-        return ModelQuilometrosMax.value
+        return this.ModelQuilometrosMax
       },
       set (testeTemp) {
-        ModelQuilometrosMax.value = testeTemp
         this.$emit('updateQuilometroMax', testeTemp)
       }
     },
 
     ordem: {
       get () {
-        return modelOrdem.value
+        return this.modelOrdem
       },
       set (testeTemp) {
-        modelOrdem.value = testeTemp
         this.$emit('updateOrdem', testeTemp)
       }
     }
@@ -321,17 +352,6 @@ export default defineComponent({
 
   setup () {
     return {
-      modelMarca,
-      modelCombustivel,
-      modelModelo,
-      ModelPrecoMin,
-      ModelPrecoMax,
-      ModelAnoMin,
-      ModelAnoMax,
-      ModelQuilometrosMin,
-      ModelQuilometrosMax,
-      modelOrdem,
-
       MarcaOptions,
       ModeloOptions,
       OrdemOptions,
