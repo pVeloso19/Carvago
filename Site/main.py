@@ -107,6 +107,58 @@ class REST_API:
             response.headers.add('Access-Control-Allow-Origin', '*')
 
             return response
+        
+        @self.app.route('/AddInteresse', methods=['GET']) 
+        def AddInteresse():
+            from Users.FiltrosNotificacoes import FiltrosNotificacoes
+            from Users.Interesse import Interesse
+
+            id_user = int(request.args.get('ID'))
+
+            fontes = ['stand-virtual', 'olx']
+            interesses = []
+            for fonte in fontes:
+                interesse = Interesse(request.args.get('Marca'), request.args.get('Modelo'), fonte, ID_User=id_user )
+                interesses.append(interesse)
+
+            filtro = FiltrosNotificacoes(
+                -1, 
+                request.args.get('AnoMinimo'), 
+                request.args.get('AnoMaximo'), 
+                request.args.get('PrecoMinimo'),
+                request.args.get('PrecoMaximo'),
+                request.args.get('Combustivel'),
+                request.args.get('KMMinimo'),
+                request.args.get('KMMaximo')
+            )
+            
+            print(type(request.args.get('AnoMinimo')))
+
+            res = self.__userFacade.addInteresse(id_user, interesses, filtro)
+            
+            response = jsonify(dict( resultado = res))
+            response.headers.add('Access-Control-Allow-Origin', '*')
+
+            return response
+        
+        @self.app.route('/RemoveInteresse', methods=['GET']) 
+        def RemoveInteresse():
+            from Users.Interesse import Interesse
+
+            id_user = int(request.args.get('ID'))
+
+            fontes = ['stand-virtual', 'olx']
+            interesses = []
+            for fonte in fontes:
+                interesse = Interesse(request.args.get('Marca'), request.args.get('Modelo'), fonte, ID_User=id_user )
+                interesses.append(interesse)
+
+            res = self.__userFacade.removeInteresse(id_user, interesses)
+            
+            response = jsonify(dict( resultado = res))
+            response.headers.add('Access-Control-Allow-Origin', '*')
+
+            return response
 
 
 rest_api = REST_API()

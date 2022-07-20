@@ -58,17 +58,18 @@ class UserFacade:
 
         return res
 
-    def addInteresse(self, id_user : int, interesse : Interesse, filtros : FiltrosNotificacoes) -> bool:
+    def addInteresse(self, id_user : int, interesses : list, filtro : FiltrosNotificacoes) -> bool:
+        user_DAO = UserDAO.instance()
+
+        id_filtro = -1
+        if(filtro is not None):
+            id_filtro = user_DAO.addFiltroNotificacaoUser(id_user, filtro)
         
-        if(filtros is not None):
-            #inserir filtro
-            pass
-        
-        #Inserir interesse
+        user_DAO.addInteresseUser(id_user, interesses, id_filtro)
 
         return True
     
-    def removeInteresse(self, id_user : int, interesse : Interesse) -> bool:
+    def removeInteresse(self, id_user : int, interesses : list) -> bool:
         #apagar filtros de notificação
 
         #apagar os interesses

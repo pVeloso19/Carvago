@@ -1,5 +1,6 @@
 from BaseDados.DBConexao import connectToDB
 
+from Users.FiltrosNotificacoes import FiltrosNotificacoes
 from Users.Interesse import Interesse
 from Users.User import User
 
@@ -133,3 +134,43 @@ class UserDAO:
 
         cursor.execute(query)
         connection.commit()
+
+    def addFiltroNotificacaoUser(self, id_user, filtrosNot : FiltrosNotificacoes) -> int:
+        connection, cursor = connectToDB()
+        
+        query = """
+            INSERT INTO carvago.Filtros_Notificacao
+	            VALUES
+                    (default, %s, %s, %s, %s, '%s', %s, %s);
+        """ % ( filtrosNot.getAnoMinimo(), filtrosNot.getAnoMaximo(), filtrosNot.getPrecoMinimo(),
+                filtrosNot.getPrecoMaximo(), filtrosNot.getCombustivel(), filtrosNot.getKMMinimo(), filtrosNot.getKMMaximo() )
+
+        cursor.execute(query)
+        connection.commit()
+
+        query = """
+            SELECT LAST_INSERT_ID();
+        """
+
+        cursor.execute(query)
+        r = cursor.fetchone()
+
+        return int(r[0])
+
+    def addInteresseUser(self, id_user : int, interesses : list, id_filtro_notificacao : int) -> bool:
+        connection, cursor = connectToDB()
+        
+        idFiltro = 'NULL' if (id_filtro_notificacao < 0) else str(id_filtro_notificacao)
+        for interesse in interesses:
+            query = """
+                INSERT INTO carvago.Interesse
+                    VALUES
+                        (%s, '%s', '%s', '%s', %s)
+            """ % ( str(id_user),  interesse.getMarca(), interesse.getModelo(), interesse.getFonte(), idFiltro)
+            
+            cursor.execute(query)
+            connection.commit()
+        
+        return True
+
+
