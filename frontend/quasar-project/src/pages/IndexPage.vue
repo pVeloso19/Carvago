@@ -1,6 +1,8 @@
 <template>
 
   <Filtros
+      v-if="maxPages > 0"
+
       :modelMarca="modelMarca"
       :modelCombustivel="modelCombustivel"
       :modelModelo="modelModelo"
@@ -36,6 +38,7 @@
         <div class="Carros">
           <div class="Carro">
             <CarCard
+              :ID="c.id"
               :Anunciante="c.anunciante"
               :Marca="c.marca"
               :Modelo="c.modelo"
@@ -57,6 +60,7 @@
               :Titulo="c.titulo"
               :Link_anuncio="c.link_anuncio"
               :Fonte="c.fonte"
+              :Favorito="c.favorito"
               v-for="c in pages[current-1]"
               :key="c"
             />
@@ -73,6 +77,7 @@
             />
           </div>
 
+          <NoContent v-if="maxPages<1 && !visible" />
         </div>
       </transition>
     </q-card-section>
@@ -91,6 +96,7 @@
 import { computed, onMounted, ref } from 'vue'
 import CarCard from 'components/CarCard.vue'
 import Filtros from 'components/Filter.vue'
+import NoContent from 'components/EmptyPage.vue'
 
 import axios from 'axios'
 
@@ -163,7 +169,8 @@ export default {
 
   components: {
     CarCard,
-    Filtros
+    Filtros,
+    NoContent
   },
 
   setup () {
@@ -172,6 +179,8 @@ export default {
     const elemByPages = ref(10)
 
     onMounted(async () => {
+      carros.value = []
+
       visible.value = true
       showSimulatedReturnData.value = false
 
@@ -236,7 +245,9 @@ export default {
       var list = []
       var i = 0
 
-      list.push([])
+      if (carros.value.length > 0) {
+        list.push([])
+      }
 
       var pag = 0
       carros.value.forEach(function (g) {
@@ -288,7 +299,7 @@ export default {
 
 <style>
 .Loding1{
-  height: 55vh;
+  height: calc(100vh - 50px);
 }
 
 .Loding2{

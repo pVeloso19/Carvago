@@ -10,7 +10,11 @@ class CarrosFacade:
     def getTodosCarrosPorInteresse(self, id_user : int, marca : str, modelo : str) -> list:
         carrosDAO = CarrosDAO.instance()
 
-        temp = carrosDAO.getAllCarrosByMarcaANDModelo(marca, modelo)
+        if (marca == '' and modelo == ''):
+            temp = carrosDAO.getAllCarrosInteresseByUtilizador(id_user)
+        else:
+            temp = carrosDAO.getAllCarrosByMarcaANDModelo(marca, modelo, id_user)
+        
         res = []
         for carro in temp:
             carroSerializable = carro.serialize()

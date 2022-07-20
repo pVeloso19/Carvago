@@ -33,15 +33,41 @@
 
 <script>
 
-import { computed, ref } from 'vue'
+import { computed, onMounted, ref } from 'vue'
+
+import axios from 'axios'
+
+import URL from '../url.js'
 
 export default {
   setup () {
-    const interesses = ref(['ford focus', 'ford mustang'])
+    const interesses = ref([])
 
     const label = computed(() => {
       const plural = (interesses.value.length > 1) ? 's' : ''
       return interesses.value.length + ' Interesse' + plural
+    })
+
+    onMounted(async () => {
+      const userJogos = await axios({
+        method: 'get',
+        url: URL.URL + '/InteressesUser',
+        params: { ID: 1 }
+      })
+
+      const userJogosData = await userJogos.data
+      const entries = Object.entries(userJogosData)
+
+      entries.forEach((elem) => {
+        let interesse = ''
+        elem[1].forEach((elem2) => {
+          elem2.forEach((elem3) => {
+            interesse += elem3 + ' '
+          })
+        })
+
+        interesses.value.push(interesse.trim())
+      })
     })
 
     return {

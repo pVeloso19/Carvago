@@ -46,11 +46,11 @@
     </div>
 
     <div class="Botoes">
-      <q-btn color="deep-orange BtnFavorito" @click="favorite=!favorite">
+      <q-btn color="deep-orange BtnFavorito" @click="addOrRemoveFav(ID)">
         <div class="row items-center no-wrap">
-          <q-icon left name="favorite" color=primary v-if="favorite"/>
+          <q-icon left name="favorite" color=primary v-if="(favorite === null) ? favoriteTemp : favorite"/>
           <q-icon left name="favorite_border" color=primary v-else/>
-          <div class="text-center" v-if="!favorite">
+          <div class="text-center" v-if="!((favorite === null) ? favoriteTemp : favorite)">
             Adicionar aos Favoritos
           </div>
           <div class="text-center" v-else>
@@ -171,7 +171,13 @@
 </template>
 
 <script>
-import { defineComponent, ref } from 'vue'
+import { computed, defineComponent, ref } from 'vue'
+
+import axios from 'axios'
+
+import URL from '../url.js'
+
+let self
 
 export default defineComponent({
   name: 'CarCard',
@@ -214,6 +220,11 @@ export default defineComponent({
     Quilometros: {
       type: Number,
       default: 0
+    },
+
+    ID: {
+      type: Number,
+      default: -1
     },
 
     Cilindrada: {
@@ -279,10 +290,21 @@ export default defineComponent({
     Fonte: {
       type: String,
       default: ''
+    },
+
+    Favorito: {
+      type: Boolean,
+      required: true
     }
   },
 
+  beforeCreate () {
+    self = this
+  },
+
   setup () {
+    const favorite = ref(null)
+
     const openNewTab = (link) => {
       window.open(link, '_blank')
     }
@@ -299,6 +321,38 @@ export default defineComponent({
       return teste
     }
 
+    const favoriteTemp = computed(() => {
+      return self.Favorito
+    })
+
+    async function addOrRemoveFav (idCarro) {
+      const favoritoTemp = (favorite.value === null) ? !favoriteTemp.value : !favorite.value
+
+      let res = false
+
+      if (favoritoTemp) {
+        const userJogos = await axios({
+          method: 'get',
+          url: URL.URL + '/AddFavorito',
+          params: { ID: 1, IDCarro: idCarro }
+        })
+        res = await userJogos.data
+      } else {
+        const userJogos = await axios({
+          method: 'get',
+          url: URL.URL + '/RemoveFavorito',
+          params: { ID: 1, IDCarro: idCarro }
+        })
+        res = await userJogos.data
+      }
+
+      res = res.resultado
+
+      if (res) {
+        favorite.value = favoritoTemp
+      }
+    }
+
     return {
       openNewTab,
       icon: ref(false),
@@ -306,10 +360,14 @@ export default defineComponent({
       autoplay: ref(true),
       carousel: ref(false),
       slide2: ref(1),
-      favorite: ref(false),
 
       QuilometrosString,
-      PrecoString
+      PrecoString,
+
+      favoriteTemp,
+      favorite,
+
+      addOrRemoveFav
     }
   }
 })
@@ -318,7 +376,6 @@ export default defineComponent({
 <style>
 
 .Card {
-
   display: grid;
   grid-template-columns: 20% 57% 23%;
   grid-template-rows: 160px 40px;

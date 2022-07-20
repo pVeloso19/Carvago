@@ -90,7 +90,7 @@ class CarrosDAO:
 
         return int(r[0])
 
-    def getAllCarrosByMarcaANDModelo(self, marca : str, modelo : str) -> list:
+    def getAllCarrosByMarcaANDModelo(self, marca : str, modelo : str, id_user : int) -> list:
         _, cursor = connectToDB()
 
         query = """
@@ -124,8 +124,10 @@ class CarrosDAO:
             id_anuncio = int(r[21])
             fonte = r[22]
 
+            fav = self.isCarroInFavoriteUser(id_user, id)
+
             carro = Carro( anunciante, marca, modelo, versao, combustivel, mes_registo, ano, quilometros, cilindrada, potencia, cor, 
-                           tipo_cor, tipo_caixa, num_portas, origem, condicao, preco, link_foto, titulo, link_anuncio, id_anuncio, fonte, ID=id)
+                           tipo_cor, tipo_caixa, num_portas, origem, condicao, preco, link_foto, titulo, link_anuncio, id_anuncio, fonte, ID=id, Favorito=fav)
             
             carros.append(carro)
 
@@ -296,8 +298,10 @@ class CarrosDAO:
             id_anuncio = int(r[21])
             fonte = r[22]
 
+            fav = self.isCarroInFavoriteUser(id_user, id)
+
             carro = Carro( anunciante, marca, modelo, versao, combustivel, mes_registo, ano, quilometros, cilindrada, potencia, cor, 
-                           tipo_cor, tipo_caixa, num_portas, origem, condicao, preco, link_foto, titulo, link_anuncio, id_anuncio, fonte, ID=id)
+                           tipo_cor, tipo_caixa, num_portas, origem, condicao, preco, link_foto, titulo, link_anuncio, id_anuncio, fonte, ID=id, Favorito=fav)
             
             carros.append(carro)
 
@@ -358,13 +362,13 @@ class CarrosDAO:
             fonte = r[22]
 
             carro = Carro( anunciante, marca, modelo, versao, combustivel, mes_registo, ano, quilometros, cilindrada, potencia, cor, 
-                           tipo_cor, tipo_caixa, num_portas, origem, condicao, preco, link_foto, titulo, link_anuncio, id_anuncio, fonte, ID=id)
+                           tipo_cor, tipo_caixa, num_portas, origem, condicao, preco, link_foto, titulo, link_anuncio, id_anuncio, fonte, ID=id, Favorito=True)
             
             carros.append(carro)
 
         return carros
 
-    def marcaCarrosComoVistos(delf, id_user : int):
+    def marcaCarrosComoVistos(self, id_user : int):
         connection, cursor = connectToDB()
 
         query = """
@@ -375,5 +379,62 @@ class CarrosDAO:
         cursor.execute(query)
         connection.commit()
 
+    def getAllCarrosInteresseByUtilizador(self, id_user : int):
+        _, cursor = connectToDB()
 
+        query = """
+            SELECT * FROM carvago.Carros
+	            WHERE (Marca, Modelo) in (SELECT Marca, Modelo FROM carvago.Interesse WHERE User_idUser=%s);
+        """%(str(id_user))
 
+        cursor.execute(query)
+
+        carros = []
+        for r in cursor:
+            id = int(r[0])
+            anunciante = r[1]
+            marca = r[2]
+            modelo = r[3]
+            versao = r[4]
+            combustivel = r[5]
+            mes_registo = r[6]
+            ano = int(r[7])
+            quilometros = int(r[8])
+            cilindrada = int(r[9])
+            potencia = int(r[10])
+            cor = r[11]
+            tipo_cor = r[12]
+            tipo_caixa = r[13]
+            num_portas = int(r[14])
+            origem = r[15]
+            condicao = r[16]
+            preco = float(r[17])
+            link_foto = r[18]
+            titulo = r[19]
+            link_anuncio = r[20]
+            id_anuncio = int(r[21])
+            fonte = r[22]
+
+            fav = self.isCarroInFavoriteUser(id_user, id)
+
+            carro = Carro( anunciante, marca, modelo, versao, combustivel, mes_registo, ano, quilometros, cilindrada, potencia, cor, 
+                           tipo_cor, tipo_caixa, num_portas, origem, condicao, preco, link_foto, titulo, link_anuncio, id_anuncio, fonte, ID=id, Favorito=fav)
+            
+            carros.append(carro)
+
+        return carros
+
+    def isCarroInFavoriteUser(self, id_user : int, id_carro : int) -> bool:
+        _, cursor = connectToDB()
+
+        query = """
+            SELECT * FROM carvago.Favorito
+	            WHERE User_idUser=%s AND Carros_idCarros=%s;
+        """%(str(id_user), str(id_carro))
+
+        cursor.execute(query)
+
+        for _ in cursor:
+            return True
+
+        return False

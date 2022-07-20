@@ -6,7 +6,7 @@ class Carro:
     
     def __init__(self, Anunciante : str, Marca : str, Modelo : str, Versao : str, Combustivel : str, Mes_Registo : str, Ano : int, 
                 Quilometros : int, Cilindrada : int, Potencia : int, Cor : str, Tipo_Cor : str, Tipo_Caixa : str, Num_Portas : int, Origem : str, 
-                Condicao : str, Preco : float, Link_foto : str, Titulo : str, Link_anuncio : str, ID_Anuncio : int, Fonte : str, ID = -1
+                Condicao : str, Preco : float, Link_foto : str, Titulo : str, Link_anuncio : str, ID_Anuncio : int, Fonte : str, ID = -1, Favorito = False
     ):
         self.__id = ID
         self.__anunciante = Anunciante
@@ -31,6 +31,7 @@ class Carro:
         self.__link_anuncio = Link_anuncio
         self.__id_anuncio = ID_Anuncio
         self.__fonte = Fonte
+        self.__favorito = Favorito
     
     def getID(self):
         return self.__id
@@ -160,5 +161,6 @@ class Carro:
         res['link_anuncio'] = self.__link_anuncio
         res['id_anuncio'] = self.__id_anuncio
         res['fonte'] = self.__fonte
+        res['favorito'] = self.__favorito
 
         return res
