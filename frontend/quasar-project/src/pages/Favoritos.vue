@@ -61,6 +61,9 @@
               :Link_anuncio="c.link_anuncio"
               :Fonte="c.fonte"
               :Favorito="c.favorito"
+
+              v-on:RemoveFavorito="removeLista($event)"
+
               v-for="c in pages[current-1]"
               :key="c"
             />
@@ -242,6 +245,17 @@ export default {
       return true
     }
 
+    function removeLista (id) {
+      let i = 0
+      while (i < carros.value.length) {
+        if (carros.value[i].id === id) {
+          carros.value.splice(i, 1)
+          i = carros.value.length
+        }
+        i++
+      }
+    }
+
     const pages = computed(() => {
       var list = []
       var i = 0
@@ -281,6 +295,8 @@ export default {
       pages,
 
       ordenaLista,
+
+      removeLista,
 
       modelMarca,
       modelCombustivel,

@@ -350,6 +350,10 @@ export default defineComponent({
 
       if (res) {
         favorite.value = favoritoTemp
+
+        if (!favoritoTemp) {
+          this.$emit('RemoveFavorito', idCarro)
+        }
       }
     }
 
