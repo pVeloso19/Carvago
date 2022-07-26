@@ -210,8 +210,8 @@
         :img-src="CarrosDestaques[i-1].link_foto[0]"
       >
         <div class="absolute-bottom custom-caption">
-          <div class="text-h2">{{CarrosDestaques[i-1].titulo}}</div>
-          <div class="text-subtitle1">{{PrecoString(i-1)}} EUR</div>
+          <div class="text-h2 TituloIndex">{{CarrosDestaques[i-1].titulo}}</div>
+          <div class="text-subtitle1 SubtituloIndex">{{PrecoString(i-1)}} EUR</div>
         </div>
       </q-carousel-slide>
     </q-carousel>
@@ -698,18 +698,18 @@ export default defineComponent({
   }
 }
 
-.custom-caption{
+.custom-caption {
   text-align: center;
   padding: 12px;
   color: white;
   background-color: rgba(0, 0, 0, .5);
 }
 
-.text-subtitle1{
+.SubtituloIndex {
   color: #FFB7D0;
 }
 
-.text-h2{
+.TituloIndex {
   font-size: 30px;
 }
 </style>
