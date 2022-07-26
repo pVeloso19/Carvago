@@ -36,42 +36,44 @@
         <p class="QuilometrosDetalhe">{{QuilometrosString()}} km</p>
         <p class="IconSparate">♦</p>
         <p class="AnoDetalhe">{{Ano}}</p>
-        <p class="IconSparate">♦</p>
+        <p class="IconSparate AnuncianteSeparate">♦</p>
         <p class="Anunciante">{{Anunciante}}</p>
       </div>
     </div>
 
     <div class="Informacoes2">
       <p class="text-center Preco">{{PrecoString()}} EUR</p>
+      <Avaliador class="btnOcultoAvaliarPreco" :Preco="PrecoString()" v-if="Avaliar">
+      </Avaliador>
     </div>
 
     <div class="Botoes">
-      <q-btn color="deep-orange BtnFavorito" @click="addOrRemoveFav(ID)">
+      <q-btn color="primary BtnFavorito" @click="addOrRemoveFav(ID)">
         <div class="row items-center no-wrap">
-          <q-icon left name="favorite" color=primary v-if="(favorite === null) ? favoriteTemp : favorite"/>
-          <q-icon left name="favorite_border" color=primary v-else/>
-          <div class="text-center" v-if="!((favorite === null) ? favoriteTemp : favorite)">
+          <q-icon name="favorite" color='whait' v-if="(favorite === null) ? favoriteTemp : favorite"/>
+          <q-icon name="favorite_border" color='whait' v-else/>
+          <div class="text-center addFavorito" style="margin-left:5px;" v-if="!((favorite === null) ? favoriteTemp : favorite)">
             Adicionar aos Favoritos
           </div>
-          <div class="text-center" v-else>
+          <div class="text-center addFavorito" style="margin-left:5px;" v-else>
             Remover dos Favoritos
           </div>
         </div>
       </q-btn>
 
-      <q-btn color="deep-orange BtnDetalhes" @click="icon = true">
+      <q-btn color="primary BtnDetalhes" @click="icon = true">
         <div class="row items-center no-wrap">
-          <q-icon left name="add" color=primary />
-          <div class="text-center">
+          <q-icon name="add" color='whait' />
+          <div class="text-center detalhes" style="margin-left:5px;">
             Detalhes
           </div>
         </div>
       </q-btn>
 
-      <q-btn color="deep-orange BtnSite" @click="openNewTab(Link_anuncio)">
+      <q-btn color="primary BtnSite" @click="openNewTab(Link_anuncio)">
         <div class="row items-center no-wrap">
-          <q-icon left name="preview" color=primary />
-          <div class="text-center">
+          <q-icon name="preview" color='whait' />
+          <div class="text-center visitarSite" style="margin-left:5px;">
             Visitar Site
           </div>
         </div>
@@ -144,24 +146,24 @@
           </div>
 
           <div class="Valor">
-            <p class="val">{{Anunciante}}</p>
-            <p class="val">{{Marca}}</p>
-            <p class="val">{{Modelo}}</p>
-            <p class="val">{{Versao}}</p>
-            <p class="val">{{Combustivel}}</p>
-            <p class="val">{{Mes_Registo}}</p>
-            <p class="val">{{Ano}}</p>
-            <p class="val">{{QuilometrosString()}} km</p>
-            <p class="val">{{Cilindrada}} cm3</p>
-            <p class="val">{{Potencia}} cv</p>
-            <p class="val">{{Cor}}</p>
-            <p class="val">{{Tipo_Cor}}</p>
-            <p class="val">{{Tipo_Caixa}}</p>
-            <p class="val">{{Num_Portas}}</p>
-            <p class="val">{{Origem}}</p>
-            <p class="val">{{Condicao}}</p>
-            <p class="val">{{PrecoString()}} €</p>
-            <p class="val">{{Fonte}}</p>
+            <p class="val">{{(Anunciante != '') ? Anunciante : '\n'}}</p>
+            <p class="val">{{(Marca != '') ? Marca : '\n'}}</p>
+            <p class="val">{{(Modelo != '') ? Modelo : '\n'}}</p>
+            <p class="val">{{(Versao != '') ? Versao : '\n'}}</p>
+            <p class="val">{{(Combustivel != '') ? Combustivel : '\n'}}</p>
+            <p class="val">{{(Mes_Registo != '') ? Mes_Registo : '\n'}}</p>
+            <p class="val">{{(Ano != '') ? Ano : '\n'}}</p>
+            <p class="val">{{(QuilometrosString() != '') ? QuilometrosString() : '\n'}} km</p>
+            <p class="val">{{(Cilindrada != '') ? Cilindrada : '\n'}} cm3</p>
+            <p class="val">{{(Potencia != '') ? Potencia : '\n'}} cv</p>
+            <p class="val">{{(Cor != '') ? Cor : '\n'}}</p>
+            <p class="val">{{(Tipo_Cor != '') ? Tipo_Cor : '\n'}}</p>
+            <p class="val">{{(Tipo_Caixa != '') ? Tipo_Caixa : '\n'}}</p>
+            <p class="val">{{(Num_Portas != '') ? Num_Portas : '\n'}}</p>
+            <p class="val">{{(Origem != '') ? Origem : '\n'}}</p>
+            <p class="val">{{(Condicao != '') ? Condicao : '\n'}}</p>
+            <p class="val">{{(PrecoString() != '') ? PrecoString() : '\n'}} €</p>
+            <p class="val">{{(Fonte != '') ? Fonte : '\n'}}</p>
           </div>
         </q-card-section>
       </q-card>
@@ -172,6 +174,9 @@
 
 <script>
 import { computed, defineComponent, ref } from 'vue'
+import { useQuasar } from 'quasar'
+
+import Avaliador from 'components/AvaliarPreco.vue'
 
 import axios from 'axios'
 
@@ -181,6 +186,11 @@ let self
 
 export default defineComponent({
   name: 'CarCard',
+
+  components: {
+    Avaliador
+  },
+
   props: {
     Anunciante: {
       type: String,
@@ -295,6 +305,11 @@ export default defineComponent({
     Favorito: {
       type: Boolean,
       required: true
+    },
+
+    Avaliar: {
+      type: Boolean,
+      default: true
     }
   },
 
@@ -303,6 +318,8 @@ export default defineComponent({
   },
 
   setup () {
+    const $q = useQuasar()
+
     const favorite = ref(null)
 
     const openNewTab = (link) => {
@@ -326,34 +343,43 @@ export default defineComponent({
     })
 
     async function addOrRemoveFav (idCarro) {
+      const id = sessionStorage.getItem('IdentificadorCarvago')
+
       const favoritoTemp = (favorite.value === null) ? !favoriteTemp.value : !favorite.value
 
       let res = false
 
-      if (favoritoTemp) {
-        const userJogos = await axios({
-          method: 'get',
-          url: URL.URL + '/AddFavorito',
-          params: { ID: 1, IDCarro: idCarro }
-        })
-        res = await userJogos.data
-      } else {
-        const userJogos = await axios({
-          method: 'get',
-          url: URL.URL + '/RemoveFavorito',
-          params: { ID: 1, IDCarro: idCarro }
-        })
-        res = await userJogos.data
-      }
-
-      res = res.resultado
-
-      if (res) {
-        favorite.value = favoritoTemp
-
-        if (!favoritoTemp) {
-          this.$emit('RemoveFavorito', idCarro)
+      if (id > 0) {
+        if (favoritoTemp) {
+          const userJogos = await axios({
+            method: 'get',
+            url: URL.URL + '/AddFavorito',
+            params: { ID: id, IDCarro: idCarro }
+          })
+          res = await userJogos.data
+        } else {
+          const userJogos = await axios({
+            method: 'get',
+            url: URL.URL + '/RemoveFavorito',
+            params: { ID: id, IDCarro: idCarro }
+          })
+          res = await userJogos.data
         }
+
+        res = res.resultado
+
+        if (res) {
+          favorite.value = favoritoTemp
+
+          if (!favoritoTemp) {
+            this.$emit('RemoveFavorito', idCarro)
+          }
+        }
+      } else {
+        $q.notify({
+          color: 'negative',
+          message: 'Impossivel adicionar aos favoritos - Realize Login para efetuar esta operação!!'
+        })
       }
     }
 
@@ -414,7 +440,7 @@ export default defineComponent({
 }
 
 .Informacoes1 .Titulo {
-  --max-size: 25;
+  --max-size: 23;
   --min-size: 10;
   --diff: calc(var(--max-size) - var(--min-size));
   --responsive: calc((var(--min-size) * 1px) + var(--diff) * ((100vw - 420px) / (1200 - 420)));
@@ -426,7 +452,7 @@ export default defineComponent({
   margin-left: 20px;
   padding-top: 10px;
 
-  height: 50px;
+  height: auto;
 }
 
 .Informacoes1 .DetalhesMinimos{
@@ -434,7 +460,7 @@ export default defineComponent({
   align-items: center;
   justify-content: center;
 
-  height: calc(100% - 50px);
+  height: auto;
 
   font-size: 20px;
 
@@ -453,12 +479,47 @@ export default defineComponent({
   grid-area: preco;
   font-weight: bold;
 
-  font-size: 305%;
+  font-size: 300%;
   color:red;
 
   display: flex;
   align-items: center;
   margin: 0px 0px 0px 0px;
+
+  z-index: 1;
+
+  -webkit-touch-callout: none; /* iOS Safari */
+    -webkit-user-select: none; /* Safari */
+     -khtml-user-select: none; /* Konqueror HTML */
+       -moz-user-select: none; /* Old versions of Firefox */
+        -ms-user-select: none; /* Internet Explorer/Edge */
+            user-select: none; /* Non-prefixed version, currently
+                                  supported by Chrome, Edge, Opera and Firefox */
+}
+
+.Informacoes2 .btnOcultoAvaliarPreco {
+  grid-area: preco;
+
+  width: 100%;
+  height: 95%;
+
+  display: none;
+
+  -webkit-touch-callout: none; /* iOS Safari */
+    -webkit-user-select: none; /* Safari */
+     -khtml-user-select: none; /* Konqueror HTML */
+       -moz-user-select: none; /* Old versions of Firefox */
+        -ms-user-select: none; /* Internet Explorer/Edge */
+            user-select: none; /* Non-prefixed version, currently
+                                  supported by Chrome, Edge, Opera and Firefox */
+}
+
+.Preco:hover + .btnOcultoAvaliarPreco {
+  display: block;
+}
+
+.btnOcultoAvaliarPreco:hover {
+  display: block;
 }
 
 .Botoes{
@@ -472,35 +533,201 @@ export default defineComponent({
 .Botoes .BtnFavorito{
   grid-area: btn1;
   margin-left: 10px;
+
+  --max-size: 10;
+  --min-size: 7;
+  --diff: calc(var(--max-size) - var(--min-size));
+  --responsive: calc((var(--min-size) * 1px) + var(--diff) * ((100vw - 420px) / (1200 - 420)));
+
+  font-size: var(--responsive);
 }
 
 .Botoes .BtnDetalhes{
   grid-area: btn2;
   margin-left: 10px;
+
+  --max-size: 10;
+  --min-size: 7;
+  --diff: calc(var(--max-size) - var(--min-size));
+  --responsive: calc((var(--min-size) * 1px) + var(--diff) * ((100vw - 420px) / (1200 - 420)));
+
+  font-size: var(--responsive);
 }
 
 .Botoes .BtnSite{
   grid-area: btn3;
   margin-left: 10px;
+
+  --max-size: 10;
+  --min-size: 7;
+  --diff: calc(var(--max-size) - var(--min-size));
+  --responsive: calc((var(--min-size) * 1px) + var(--diff) * ((100vw - 420px) / (1200 - 420)));
+
+  font-size: var(--responsive);
 }
 
 .TodosDetalhes {
   display: grid;
-  grid-template-columns: 45% 10% 45%;
+  grid-template-columns: auto auto auto;
   grid-template-areas:
   "Titulo NADA Valor";
 }
 
 .TodosDetalhes .Titulo{
   grid-area: Titulo;
+  margin-right: 20px;
 }
 
 .TodosDetalhes .Valor{
   grid-area: Valor;
+  white-space: pre;
 }
 
 .DetalhesTitulo{
   margin-right: 20px;
 }
 
+@media (max-width: 1370px) {
+  .Anunciante{
+    display: none
+  }
+
+  .AnuncianteSeparate{
+    display: none
+  }
+
+  .Informacoes1 .DetalhesMinimos{
+    font-size: 18px;
+  }
+}
+
+@media (max-width: 780px) {
+  .Card {
+    display: grid;
+    grid-template-columns: 100%;
+    grid-template-rows: auto auto auto auto;
+    grid-template-areas:
+    "Imagens"
+    "Informacoes1"
+    "Informacoes2"
+    "Botoes";
+
+    padding: 10px 10px 10px 10px;
+    margin-left: 40px;
+    margin-right: 40px;
+  }
+
+  .Informacoes1 .Titulo {
+    --max-size: 35;
+    --min-size: 20;
+    --diff: calc(var(--max-size) - var(--min-size));
+    --responsive: calc((var(--min-size) * 1px) + var(--diff) * ((100vw - 420px) / (1200 - 420)));
+
+    font-size: var(--responsive);
+  }
+
+  .Informacoes1 .DetalhesMinimos{
+    margin-bottom: 10px;
+    margin-top: 10px;
+  }
+
+  .Informacoes2 .Preco{
+    justify-content: center;
+    margin-bottom: 10px;
+  }
+}
+
+@media (max-width: 600px) {
+  .Card {
+    margin-left: 25px;
+    margin-right: 25px;
+  }
+
+  .addFavorito{
+    display: none
+  }
+
+  .detalhes{
+    display: none
+  }
+
+  .Botoes .BtnFavorito{
+    font-size: 12px;
+  }
+
+  .Botoes .BtnDetalhes{
+    font-size: 12px;
+  }
+}
+
+@media (max-width: 380px) {
+  .Card {
+    margin-left: 5px;
+    margin-right: 5px;
+  }
+
+  .visitarSite{
+    display: none
+  }
+
+  .Botoes .BtnFavorito{
+    font-size: 10px;
+  }
+
+  .Botoes .BtnDetalhes{
+    font-size: 10px;
+  }
+
+  .Botoes .BtnSite{
+    font-size: 10px;
+  }
+
+  .Informacoes1 .DetalhesMinimos {
+    display: none;
+  }
+
+  .Informacoes2 .Preco{
+    --max-size: 45;
+    --min-size: 25;
+    --diff: calc(var(--max-size) - var(--min-size));
+    --responsive: calc((var(--min-size) * 1px) + var(--diff) * ((100vw - 420px) / (1200 - 420)));
+
+    font-size: var(--responsive);
+  }
+}
+
+@media (max-width: 310px) {
+  .Botoes .BtnFavorito{
+    --max-size: 25;
+    --min-size: 12;
+    --diff: calc(var(--max-size) - var(--min-size));
+    --responsive: calc((var(--min-size) * 1px) + var(--diff) * ((100vw - 420px) / (1200 - 420)));
+
+    font-size: var(--responsive);
+    width: var(--responsive);
+    min-width: var(--responsive);
+  }
+
+  .Botoes .BtnDetalhes{
+    --max-size: 25;
+    --min-size: 12;
+    --diff: calc(var(--max-size) - var(--min-size));
+    --responsive: calc((var(--min-size) * 1px) + var(--diff) * ((100vw - 420px) / (1200 - 420)));
+
+    font-size: var(--responsive);
+    width: var(--responsive);
+    min-width: var(--responsive);
+  }
+
+  .Botoes .BtnSite{
+    --max-size: 25;
+    --min-size: 12;
+    --diff: calc(var(--max-size) - var(--min-size));
+    --responsive: calc((var(--min-size) * 1px) + var(--diff) * ((100vw - 420px) / (1200 - 420)));
+
+    font-size: var(--responsive);
+    width: var(--responsive);
+    min-width: var(--responsive);
+  }
+}
 </style>

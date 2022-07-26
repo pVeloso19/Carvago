@@ -1,8 +1,6 @@
 <template>
 
   <Filtros
-      v-if="maxPages > 0"
-
       :modelMarca="modelMarca"
       :modelCombustivel="modelCombustivel"
       :modelModelo="modelModelo"
@@ -14,18 +12,20 @@
       :ModelQuilometrosMax="ModelQuilometrosMax"
       :modelOrdem="modelOrdem"
 
-      v-on:updateMarca="modelMarca = $event"
-      v-on:updateCombustivel="modelCombustivel = $event"
-      v-on:updateModelo="modelModelo = $event"
-      v-on:updatePrecoMin="ModelPrecoMin = $event"
-      v-on:updatePrecoMax="ModelPrecoMax = $event"
-      v-on:updateAnoMin="ModelAnoMin = $event"
-      v-on:updateAnoMax="ModelAnoMax = $event"
-      v-on:updateQuilometroMin="ModelQuilometrosMin = $event"
-      v-on:updateQuilometroMax="ModelQuilometrosMax = $event"
-      v-on:updateOrdem="modelOrdem = $event"
+      v-on:updateMarca="modelMarca = $event; mudou=true"
+      v-on:updateCombustivel="modelCombustivel = $event; mudou=true"
+      v-on:updateModelo="modelModelo = $event; mudou=true"
+      v-on:updatePrecoMin="ModelPrecoMin = $event; mudou=true"
+      v-on:updatePrecoMax="ModelPrecoMax = $event; mudou=true"
+      v-on:updateAnoMin="ModelAnoMin = $event; mudou=true"
+      v-on:updateAnoMax="ModelAnoMax = $event; mudou=true"
+      v-on:updateQuilometroMin="ModelQuilometrosMin = $event; mudou=true"
+      v-on:updateQuilometroMax="ModelQuilometrosMax = $event; mudou=true"
+      v-on:updateOrdem="modelOrdem = $event; mudou=true"
 
-      v-on:Ordena="ordenaLista($event)"
+      :CarrosDestaques="carrosDestaques"
+
+      v-on:Pesquisa="getCarros()"
     />
 
   <q-card class="bg-grey-3 relative-position Loding1">
@@ -61,7 +61,8 @@
               :Link_anuncio="c.link_anuncio"
               :Fonte="c.fonte"
               :Favorito="c.favorito"
-              v-for="c in pages[current-1]"
+              :Avaliar="false"
+              v-for="c in carros"
               :key="c"
             />
           </div>
@@ -69,15 +70,13 @@
           <div class="q-pa-lg flex flex-center" v-if="maxPages>1">
             <q-pagination
               v-model="current"
-              color="purple"
+              color="primary"
               :max="maxPages"
-              max-pages="10"
+              max-pages="4"
               boundary-links
               direction-links
             />
           </div>
-
-          <NoContent v-if="maxPages<1 && !visible" />
         </div>
       </transition>
     </q-card-section>
@@ -93,16 +92,23 @@
 
 <script>
 
-import { computed, onMounted, ref } from 'vue'
+import { onMounted, ref } from 'vue'
 import CarCard from 'components/CarCard.vue'
-import Filtros from 'components/Filter.vue'
-import NoContent from 'components/EmptyPage.vue'
+import Filtros from 'components/FilterHomePage.vue'
 
 import axios from 'axios'
 
 import URL from '../url.js'
 
 const carros = ref([])
+
+const mudou = ref(false)
+
+const visible = ref(false)
+const showSimulatedReturnData = ref(false)
+
+const current = ref(1)
+const maxPages = ref(0)
 
 const modelMarca = ref([])
 const modelCombustivel = ref([])
@@ -113,55 +119,63 @@ const ModelAnoMin = ref(null)
 const ModelAnoMax = ref(null)
 const ModelQuilometrosMin = ref(null)
 const ModelQuilometrosMax = ref(null)
+const modelOrdem = ref('Mais Recentes')
 
-function ordenaLista (ordem) {
-  if (ordem === 'Mais Recentes') {
-    carros.value.sort(function (carro1, carro2) {
-      return (carro1.ano - carro2.ano === 0) ? 1 : carro2.ano - carro1.ano
-    })
-    return
+const carrosDestaques = ref([])
+
+const getCarros = async () => {
+  maxPages.value = 0
+
+  visible.value = true
+  showSimulatedReturnData.value = false
+
+  carros.value = []
+
+  if (mudou.value) {
+    current.value = 1
+    mudou.value = false
   }
 
-  if (ordem === 'Preço: Mais Baixo') {
-    carros.value.sort(function (carro1, carro2) {
-      return (carro1.preco - carro2.preco === 0) ? 1 : carro1.preco - carro2.preco
-    })
-    return
-  }
+  const marcasTemp = []
+  modelMarca.value.forEach((elem) => {
+    marcasTemp.push(elem.name.toLowerCase())
+  })
 
-  if (ordem === 'Preço: Mais Alto') {
-    carros.value.sort(function (carro1, carro2) {
-      return (carro1.preco - carro2.preco === 0) ? 1 : carro2.preco - carro1.preco
-    })
-    return
-  }
+  const ma = (marcasTemp.length <= 0) ? '' : marcasTemp.toString()
+  const c = (modelCombustivel.value.length <= 0) ? '' : modelCombustivel.value.toString()
+  const mo = (modelModelo.value === null) ? '' : modelModelo.value
+  const pmin = (ModelPrecoMin.value === null) ? '' : ModelPrecoMin.value
+  const pmax = (ModelPrecoMax.value === null) ? '' : ModelPrecoMax.value
+  const amin = (ModelAnoMin.value === null) ? '' : ModelAnoMin.value
+  const amax = (ModelAnoMax.value === null) ? '' : ModelAnoMax.value
+  const qmin = (ModelQuilometrosMin.value === null) ? '' : ModelQuilometrosMin.value
+  const qmax = (ModelQuilometrosMax.value === null) ? '' : ModelQuilometrosMax.value
+  const o = modelOrdem.value
 
-  if (ordem === 'KM: Mais Baixo') {
-    carros.value.sort(function (carro1, carro2) {
-      return (carro1.quilometros - carro2.quilometros === 0) ? 1 : carro1.quilometros - carro2.quilometros
-    })
-    return
-  }
+  const id = -1 // sessionStorage.getItem('IdentificadorCarvago')
 
-  if (ordem === 'KM: Mais Alto') {
-    carros.value.sort(function (carro1, carro2) {
-      return (carro1.quilometros - carro2.quilometros === 0) ? 1 : carro2.quilometros - carro1.quilometros
-    })
-    return
-  }
+  const userJogos = await axios({
+    method: 'get',
+    url: URL.URL + '/AllCarsAvailable',
+    params: { ID: id, Marca: ma, Modelo: mo, AnoMinimo: amin, AnoMaximo: amax, PrecoMinimo: pmin, PrecoMaximo: pmax, Combustivel: c, KMMinimo: qmin, KMMaximo: qmax, Pagina: current.value, Ordem: o }
+  })
 
-  if (ordem === 'Ano: Mais Baixo') {
-    carros.value.sort(function (carro1, carro2) {
-      return (carro1.ano - carro2.ano === 0) ? 1 : carro1.ano - carro2.ano
-    })
-    return
-  }
+  let userJogosData = await userJogos.data
+  maxPages.value = userJogosData.paginas
+  userJogosData = userJogosData.carros
 
-  if (ordem === 'Ano: Mais Alto') {
-    carros.value.sort(function (carro1, carro2) {
-      return (carro1.ano - carro2.ano === 0) ? 1 : carro2.ano - carro1.ano
-    })
-  }
+  carrosDestaques.value = []
+  let i = 0
+  userJogosData.forEach((elem) => {
+    carros.value.push(elem)
+    if (i < 4) {
+      carrosDestaques.value.push(elem)
+      i++
+    }
+  })
+
+  visible.value = false
+  showSimulatedReturnData.value = true
 }
 
 export default {
@@ -169,117 +183,20 @@ export default {
 
   components: {
     CarCard,
-    Filtros,
-    NoContent
+    Filtros
   },
 
   setup () {
-    const visible = ref(false)
-    const showSimulatedReturnData = ref(false)
-    const elemByPages = ref(10)
-
     onMounted(async () => {
-      carros.value = []
-
-      visible.value = true
-      showSimulatedReturnData.value = false
-
-      const userJogos = await axios({
-        method: 'get',
-        url: URL.URL + '/AllCars',
-        params: { ID: 1, marca: 'ford', modelo: 'focus' }
-      })
-
-      let userJogosData = await userJogos.data
-      userJogosData = userJogosData.carros
-
-      userJogosData.forEach((elem) => {
-        carros.value.push(elem)
-      })
-
-      visible.value = false
-      showSimulatedReturnData.value = true
-    })
-
-    function filtrosOK (carro) {
-      if (modelMarca.value.length !== 0 && !modelMarca.value.includes(carro.marca)) {
-        return false
-      }
-
-      if (modelCombustivel.value.length !== 0 && !modelCombustivel.value.includes(carro.combustivel)) {
-        return false
-      }
-
-      if (modelModelo.value !== null && modelModelo.value !== '' && modelModelo.value !== carro.modelo) {
-        return false
-      }
-
-      if (ModelPrecoMin.value !== null && ModelPrecoMin.value !== '' && ModelPrecoMin.value > carro.preco) {
-        return false
-      }
-
-      if (ModelPrecoMax.value !== null && ModelPrecoMax.value !== '' && ModelPrecoMax.value < carro.preco) {
-        return false
-      }
-
-      if (ModelAnoMin.value !== null && ModelAnoMin.value !== '' && ModelAnoMin.value > carro.ano) {
-        return false
-      }
-
-      if (ModelAnoMax.value !== null && ModelAnoMax.value !== '' && ModelAnoMax.value < carro.ano) {
-        return false
-      }
-
-      if (ModelQuilometrosMin.value !== null && ModelQuilometrosMin.value !== '' && ModelQuilometrosMin.value > carro.quilometros) {
-        return false
-      }
-
-      if (ModelQuilometrosMin.value !== null && ModelQuilometrosMin.value !== '' && ModelQuilometrosMin.value < carro.quilometros) {
-        return false
-      }
-
-      return true
-    }
-
-    const pages = computed(() => {
-      var list = []
-      var i = 0
-
-      if (carros.value.length > 0) {
-        list.push([])
-      }
-
-      var pag = 0
-      carros.value.forEach(function (g) {
-        if (filtrosOK(g)) {
-          list[pag].push(g)
-
-          i += 1
-          i = i % elemByPages.value
-
-          if (i === 0) {
-            pag++
-            list.push([])
-          }
-        }
-      })
-
-      return list
-    })
-
-    const maxPages = computed(() => {
-      return pages.value.length
+      getCarros()
     })
 
     return {
       carros,
       visible,
       showSimulatedReturnData,
-      current: ref(1),
+      current,
       maxPages,
-      pages,
-
-      ordenaLista,
 
       modelMarca,
       modelCombustivel,
@@ -290,7 +207,19 @@ export default {
       ModelAnoMax,
       ModelQuilometrosMin,
       ModelQuilometrosMax,
-      modelOrdem: ref('Mais Recentes')
+      modelOrdem,
+
+      getCarros,
+      carrosDestaques,
+
+      mudou
+    }
+  },
+  watch: {
+    current (newValue, oldValue) {
+      if (newValue !== oldValue) {
+        getCarros()
+      }
     }
   }
 }

@@ -140,7 +140,6 @@ CREATE TABLE IF NOT EXISTS `carvago`.`Favorito` (
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
-
 SET SQL_MODE=@OLD_SQL_MODE;
 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
@@ -160,4 +159,8 @@ INSERT INTO carvago.Filtros_Notificacao
 
 INSERT INTO carvago.Interesse
 	VALUES
-    (1, 'ford', 'focus', 'stand-virtual', 1)
+    (1, 'ford', 'focus', 'stand-virtual', 1);
+
+INSERT INTO carvago.Interesse
+	VALUES
+    (1, 'ford', 'focus', 'olx', 1);

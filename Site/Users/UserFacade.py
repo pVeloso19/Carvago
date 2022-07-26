@@ -38,6 +38,35 @@ class UserFacade:
         
         else:
             return -3
+    
+    # Método responsável por efetuar o registro de um utilizador
+    # Realiza o registro através do nome, email e password
+    # Retorna um inteiro <0 se erro ou >0 se sucesso
+        # -1 Falha nos campos
+        # -3 email inválido
+        # maior que zero sucesso. O valor corresponde ao id do utilizador
+    def createAccount(self, nome : str, email : str, password : str) -> int:
+        if(nome is None or nome==''):
+            return -1
+        
+        if(password is None or password==''):
+            return -1
+
+        if(email is None or email==''):
+            return -1
+        
+        user_DAO = UserDAO.instance()
+
+        user = user_DAO.getUserByEmail(email)
+
+        if(user is None):
+            return user_DAO.register(User(-1, nome, email, password))
+        else:
+            return -3
+    
+    def getUserData(self, id_user : int) -> dict:
+        user_DAO = UserDAO.instance()
+        return user_DAO.getData(id_user)
 
     def getInteressesUser(self, id_user = -1) -> dict:
         res = {}
@@ -51,11 +80,17 @@ class UserFacade:
         for i in lista:
             fonte = i.getFonte()
             
-            if(fonte not in res):
-                res[fonte] = []
-            
-            res[fonte].append( (i.getMarca(), i.getModelo()) )
+            if(id_user <= 0):
+                if(fonte not in res):
+                    res[fonte] = []
 
+                res[fonte].append( (i.getMarca(), i.getModelo()) )
+            else:
+                res[i.getMarca() + ' ' + i.getModelo()] = ''
+
+        if(id_user > 0):
+            res = list(res)
+        
         return res
 
     def addInteresse(self, id_user : int, interesses : list, filtro : FiltrosNotificacoes) -> bool:

@@ -69,9 +69,9 @@
           <div class="q-pa-lg flex flex-center" v-if="maxPages>1">
             <q-pagination
               v-model="current"
-              color="purple"
+              color="primary"
               :max="maxPages"
-              max-pages="10"
+              max-pages="4"
               boundary-links
               direction-links
             />
@@ -184,10 +184,12 @@ export default {
 
       carros.value = []
 
+      const id = sessionStorage.getItem('IdentificadorCarvago')
+
       const userJogos = await axios({
         method: 'get',
         url: URL.URL + '/AllCarsNotSee',
-        params: { ID: 1 }
+        params: { ID: id }
       })
 
       let userJogosData = await userJogos.data
@@ -202,15 +204,31 @@ export default {
     })
 
     function filtrosOK (carro) {
-      if (modelMarca.value.length !== 0 && !modelMarca.value.includes(carro.marca)) {
-        return false
+      if (modelMarca.value.length !== 0) {
+        let res = false
+        modelMarca.value.forEach((elem) => {
+          if (elem.name.toLowerCase() === carro.marca.toLowerCase()) {
+            res = true
+          }
+        })
+        if (!res) {
+          return false
+        }
       }
 
-      if (modelCombustivel.value.length !== 0 && !modelCombustivel.value.includes(carro.combustivel)) {
-        return false
+      if (modelCombustivel.value.length !== 0) {
+        let res = false
+        modelCombustivel.value.forEach((elem) => {
+          if (elem.toLowerCase() === carro.combustivel.toLowerCase()) {
+            res = true
+          }
+        })
+        if (!res) {
+          return false
+        }
       }
 
-      if (modelModelo.value !== null && modelModelo.value !== '' && modelModelo.value !== carro.modelo) {
+      if (modelModelo.value !== null && modelModelo.value !== '' && modelModelo.value.toLowerCase() !== carro.modelo.toLowerCase()) {
         return false
       }
 

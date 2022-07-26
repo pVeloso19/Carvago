@@ -1,6 +1,7 @@
 
 from BaseDados.DBConexao import connectToDB
 from Carros.Carro import Carro
+from Users.FiltrosNotificacoes import FiltrosNotificacoes
 
 class CarrosDAO:
     _instance = None
@@ -95,7 +96,8 @@ class CarrosDAO:
 
         query = """
             select * from carvago.Carros
-                where Marca = '%s' and Modelo = '%s';
+                where Marca = '%s' and Modelo = '%s'
+                ORDER BY Data DESC;
         """%(marca, modelo)
 
         cursor.execute(query)
@@ -268,7 +270,8 @@ class CarrosDAO:
 
         query = """
             select * from carvago.Carros
-                WHERE idCarros in %s;
+                WHERE idCarros in %s
+                ORDER BY Data DESC;
         """%(carros_nao_vistos)
 
         cursor.execute(query)
@@ -331,7 +334,8 @@ class CarrosDAO:
 
         query = """
             select * from carvago.Carros
-                WHERE idCarros in %s;
+                WHERE idCarros in %s
+                ORDER BY Data DESC;
         """%(carros_favoritos)
 
         cursor.execute(query)
@@ -384,7 +388,8 @@ class CarrosDAO:
 
         query = """
             SELECT * FROM carvago.Carros
-	            WHERE (Marca, Modelo) in (SELECT Marca, Modelo FROM carvago.Interesse WHERE User_idUser=%s);
+	            WHERE (Marca, Modelo) in (SELECT Marca, Modelo FROM carvago.Interesse WHERE User_idUser=%s)
+                ORDER BY Data DESC;
         """%(str(id_user))
 
         cursor.execute(query)
@@ -438,3 +443,108 @@ class CarrosDAO:
             return True
 
         return False
+    
+    def getAllCarrosAvailable(self, id_user : int, marca : list, modelo : str, filtro : FiltrosNotificacoes, num_pag : int, ordem : str) -> list:
+        _, cursor = connectToDB()
+
+        ordemBY = 'ORDER BY Data DESC'
+
+        if(ordem == 'Preço: Mais Baixo'):
+            ordemBY = 'ORDER BY Preco ASC'
+        elif(ordem == 'Preço: Mais Alto'):
+            ordemBY = 'ORDER BY Preco DESC'
+        elif(ordem == 'KM: Mais Baixo'):
+            ordemBY = 'ORDER BY Quilometros ASC'
+        elif(ordem == 'KM: Mais Alto'):
+            ordemBY = 'ORDER BY Quilometros DESC'
+        elif(ordem == 'Ano: Mais Baixo'):
+            ordemBY = 'ORDER BY Ano ASC'
+        elif(ordem == 'Ano: Mais Alto'):
+            ordemBY = 'ORDER BY Ano DESC'
+        
+        from re import sub
+        marcas = str(marca)
+        marcas = sub('\[','(', marcas)
+        marcas = sub('\]',')', marcas)
+
+        combustiveis = str(filtro.getCombustivel())
+        combustiveis = sub('\[','(', combustiveis)
+        combustiveis = sub('\]',')', combustiveis)
+
+        Combustivel = '' if (filtro.getCombustivel() == 'NULL' or combustiveis == "('')") else f"AND Combustivel IN {combustiveis}"
+        Marca = '' if (marca == '' or marcas == "('')") else f"AND Marca IN {marcas}"
+        Modelo = '' if (modelo == '') else f"AND Modelo = '{modelo}'"
+
+        query = """
+            SELECT * FROM carvago.Carros
+                WHERE
+                    Ano >= %s AND Ano <= %s AND Preco >= %s AND Preco <= %s AND Quilometros >= %s AND Quilometros <= %s %s %s %s
+                    %s
+                    LIMIT 10 OFFSET %s;
+        """%(filtro.getAnoMinimo(), filtro.getAnoMaximo(), filtro.getPrecoMinimo(), filtro.getPrecoMaximo(), filtro.getKMMinimo(), filtro.getKMMaximo(), Combustivel, Marca, Modelo, ordemBY, str((num_pag-1)*10) )
+
+        cursor.execute(query)
+
+        carros = []
+        for r in cursor:
+            id = int(r[0])
+            anunciante = r[1]
+            marca = r[2]
+            modelo = r[3]
+            versao = r[4]
+            combustivel = r[5]
+            mes_registo = r[6]
+            ano = int(r[7])
+            quilometros = int(r[8])
+            cilindrada = int(r[9])
+            potencia = int(r[10])
+            cor = r[11]
+            tipo_cor = r[12]
+            tipo_caixa = r[13]
+            num_portas = int(r[14])
+            origem = r[15]
+            condicao = r[16]
+            preco = float(r[17])
+            link_foto = r[18]
+            titulo = r[19]
+            link_anuncio = r[20]
+            id_anuncio = int(r[21])
+            fonte = r[22]
+
+            fav = self.isCarroInFavoriteUser(id_user, id)
+
+            carro = Carro( anunciante, marca, modelo, versao, combustivel, mes_registo, ano, quilometros, cilindrada, potencia, cor, 
+                           tipo_cor, tipo_caixa, num_portas, origem, condicao, preco, link_foto, titulo, link_anuncio, id_anuncio, fonte, ID=id, Favorito=fav)
+            
+            carros.append(carro)
+
+        return carros
+    
+    def getNumPagesCarrosAvailable(self, marca : str, modelo : str, filtro : FiltrosNotificacoes, num_pag) -> list:
+        _, cursor = connectToDB()
+        
+        from re import sub
+        marcas = str(marca)
+        marcas = sub('\[','(', marcas)
+        marcas = sub('\]',')', marcas)
+
+        combustiveis = str(filtro.getCombustivel())
+        combustiveis = sub('\[','(', combustiveis)
+        combustiveis = sub('\]',')', combustiveis)
+
+        Combustivel = '' if (filtro.getCombustivel() == 'NULL' or combustiveis == "('')") else f"AND Combustivel IN {combustiveis}"
+        Marca = '' if (marca == '' or marcas == "('')") else f"AND Marca IN {marcas}"
+        Modelo = '' if (modelo == '') else f"AND Modelo = '{modelo}'"
+
+        query = """
+            SELECT count(*) FROM carvago.Carros
+                WHERE
+                    Ano >= %s AND Ano <= %s AND Preco >= %s AND Preco <= %s AND Quilometros >= %s AND Quilometros <= %s %s %s %s;
+        """%(filtro.getAnoMinimo(), filtro.getAnoMaximo(), filtro.getPrecoMinimo(), filtro.getPrecoMaximo(), filtro.getKMMinimo(), filtro.getKMMaximo(), Combustivel, Marca, Modelo )
+
+        cursor.execute(query)
+        r = cursor.fetchone()
+
+        import math
+        return math.ceil(int(r[0]) / 10 )
+

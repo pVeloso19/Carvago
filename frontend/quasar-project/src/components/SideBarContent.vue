@@ -1,33 +1,39 @@
 <template>
   <div class="q-pa-md q-gutter-sm">
-    <q-btn flat color="primary" label="Página Inicial" icon='home' @click="goTo('home')"/>
-    <q-btn flat color="primary" label="Todos os carros" icon='time_to_leave' @click="goTo('carros')"/>
+    <q-btn color="primary" label="Página Inicial" icon='home' @click="goTo('home')" class="btnPaginaInicialBarra"/>
+
+    <q-btn flat color="black" label="Todos os carros" icon='time_to_leave' @click="goTo('carros')" style="margin-bottom: 2vh;"/>
 
     <q-expansion-item
-        expand-separator
-        icon="remove_red_eye"
-        label="Meus Interesses"
-        caption="Nenhum Interesse"
-        disable
-        v-if="interesses.length==0"
-      />
+      expand-separator
+      icon="remove_red_eye"
+      label="Meus Interesses"
+      caption="Nenhum Interesse"
+      disable
+      v-if="interesses.length==0"
+      style="margin-bottom: 2vh;"
+    />
 
-      <q-expansion-item
-        expand-separator
-        icon="remove_red_eye"
-        label="Meus Interesses"
-        :caption="label"
-        v-else
-        @click="goTo('interesses')"
-      >
-        <q-btn flat color="primary" :label="i" v-for="i in interesses" :key="i" @click="goTo('interesses/'+i)"/>
-      </q-expansion-item>
+    <q-expansion-item
+      expand-separator
+      icon="remove_red_eye"
+      label="Meus Interesses"
+      :caption="label"
+      v-else
+      @click="goTo('interesses')"
+      style="margin-bottom: 2vh;"
+    >
+      <q-btn flat align="left" color="black" :label="i" v-for="i in interesses" :key="i" @click="goTo('interesses/'+i)" class="InteresseBtnEnterPage" />
+    </q-expansion-item>
 
-    <q-btn flat color="primary" label="Favoritos" icon='star' @click="goTo('favoritos')"/>
-    <q-btn flat color="primary" label="Novos Carros" icon='new_releases' @click="goTo('newCars')"/>
+    <q-btn flat color="black" label="Favoritos" icon='star' @click="goTo('favoritos')" style="margin-bottom: 2vh;"/>
+    <q-btn flat color="black" label="Novos Carros" icon='new_releases' @click="goTo('newCars')" style="margin-bottom: 2vh;"/>
 
-    <q-btn flat color="primary" label="Adicionar Interesses" icon='add' @click="goTo('add')"/>
-    <q-btn flat color="primary" label="Logout" icon='logout' @click="logout()"/>
+    <q-separator style="margin-bottom: 2vh;"/>
+
+    <q-btn flat color="black" label="Adicionar Interesses" icon='add' @click="goTo('add')"/>
+
+    <q-btn color="primary" class="btnLogoutBarra" label="Logout" icon='logout' @click="logout()"/>
   </div>
 </template>
 
@@ -49,24 +55,17 @@ export default {
     })
 
     onMounted(async () => {
+      const id = sessionStorage.getItem('IdentificadorCarvago')
       const userJogos = await axios({
         method: 'get',
         url: URL.URL + '/InteressesUser',
-        params: { ID: 1 }
+        params: { ID: id }
       })
 
       const userJogosData = await userJogos.data
-      const entries = Object.entries(userJogosData)
 
-      entries.forEach((elem) => {
-        let interesse = ''
-        elem[1].forEach((elem2) => {
-          elem2.forEach((elem3) => {
-            interesse += elem3 + ' '
-          })
-        })
-
-        interesses.value.push(interesse.trim())
+      userJogosData.forEach((elem) => {
+        interesses.value.push(elem.trim())
       })
     })
 
@@ -75,6 +74,7 @@ export default {
         window.location = '#/' + path
       },
       logout () {
+        sessionStorage.removeItem('IdentificadorCarvago')
         window.location = '#/'
       },
       interesses,
@@ -84,3 +84,27 @@ export default {
 }
 
 </script>
+
+<style>
+.InteresseBtnEnterPage {
+  width:100%;
+  padding-left: 20px;
+}
+
+.btnLogoutBarra {
+  position: absolute;
+  left: 0;
+  bottom: 20px;
+  width:300px;
+  max-width:85%;
+  padding-left: 15px;
+  margin-left: 20px;
+}
+
+.btnPaginaInicialBarra {
+  width:270px;
+  max-width:97%;
+
+  margin-bottom: 2vh;
+}
+</style>

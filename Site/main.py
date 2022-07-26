@@ -32,6 +32,32 @@ class REST_API:
 
             return response
         
+        @self.app.route('/create', methods=['GET']) 
+        def create():
+            
+            nome = request.args.get('nome')
+            email = request.args.get('email')
+            password = request.args.get('password')
+            
+            res = self.__userFacade.createAccount(nome, email, password)
+
+            response = jsonify(dict( resultado = res))
+            response.headers.add('Access-Control-Allow-Origin', '*')
+
+            return response
+        
+        @self.app.route('/userData', methods=['GET']) 
+        def userData():
+            
+            id_user = int(request.args.get('ID'))
+            
+            res = self.__userFacade.getUserData(id_user)
+
+            response = jsonify(dict( resultado = res))
+            response.headers.add('Access-Control-Allow-Origin', '*')
+
+            return response
+        
         @self.app.route('/InteressesUser', methods=['GET']) 
         def getInteresses():
             
@@ -132,9 +158,7 @@ class REST_API:
                 request.args.get('KMMaximo')
             )
             
-            print(type(request.args.get('AnoMinimo')))
-
-            res = self.__userFacade.addInteresse(id_user, interesses, filtro)
+            res = self.__userFacade.addInteresse( id_user, interesses, filtro)
             
             response = jsonify(dict( resultado = res))
             response.headers.add('Access-Control-Allow-Origin', '*')
@@ -156,6 +180,42 @@ class REST_API:
             res = self.__userFacade.removeInteresse(id_user, interesses)
             
             response = jsonify(dict( resultado = res))
+            response.headers.add('Access-Control-Allow-Origin', '*')
+
+            return response
+        
+        @self.app.route('/AllCarsAvailable', methods=['GET']) 
+        def AllCarsAvailable():
+            from Users.FiltrosNotificacoes import FiltrosNotificacoes
+
+            id_user = int(request.args.get('ID'))
+            modelo = request.args.get('Modelo')
+
+            ordem = request.args.get('Ordem')
+
+            marca = request.args.get('Marca')
+            combustivel = request.args.get('Combustivel')
+            
+            from re import split
+            marca = '' if(marca == '') else split(',', marca)
+            combustivel = '' if(combustivel == '') else split(',', combustivel)
+
+            print(marca)
+
+            filtro = FiltrosNotificacoes(
+                -1, 
+                request.args.get('AnoMinimo'), 
+                request.args.get('AnoMaximo'), 
+                request.args.get('PrecoMinimo'),
+                request.args.get('PrecoMaximo'),
+                combustivel,
+                request.args.get('KMMinimo'),
+                request.args.get('KMMaximo')
+            )
+            
+            res, pages = self.__carrosFacade.getTodosCarrosAvailable(id_user, marca, modelo, filtro, int(request.args.get('Pagina')), ordem )
+
+            response = jsonify(dict( carros = res, paginas = pages))
             response.headers.add('Access-Control-Allow-Origin', '*')
 
             return response
@@ -185,9 +245,10 @@ for fonte, interesses in fontes.items():
         carros_novos.extend(novos)
         id_carros_vendidos.extend(vendidos)
     elif( fonte == 'olx'):
-        novos, vendidos = olx.getDados(interesses)
-        carros_novos.extend(novos)
-        id_carros_vendidos.extend(vendidos)
+        pass
+        #novos, vendidos = olx.getDados(interesses)
+        #carros_novos.extend(novos)
+        #id_carros_vendidos.extend(vendidos)
 
 #Faz algo com os carros novos
 print('novos = [', end=' ,')

@@ -8,7 +8,7 @@ class FiltrosNotificacoes:
         self.__ano_maximo = 5030 if (AnoMaximo == '' or AnoMaximo == 'NULL') else int(AnoMaximo)
         self.__preco_minimo = -1 if (PrecoMinimo == '' or PrecoMinimo == 'NULL') else float(PrecoMinimo)
         self.__preco_maximo = 99999999 if (PrecoMaximo == '' or PrecoMaximo == 'NULL') else float(PrecoMaximo)
-        self.__combustivel = Combustivel
+        self.__combustivel = 'NULL' if (Combustivel == '') else Combustivel
         self.__KM_minimo = -1 if (KM_Minimo == '' or KM_Minimo == 'NULL') else int(KM_Minimo)
         self.__KM_maximo = 99999999 if (KM_Maximo == '' or KM_Maximo == 'NULL') else int(KM_Maximo)
 

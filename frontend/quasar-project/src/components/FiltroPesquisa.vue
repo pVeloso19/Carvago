@@ -10,10 +10,11 @@
           @filter="filterFnMarca"
           label="Marca"
           multiple
+          emit-value
           map-options
           use-chips
           @update:model-value="val => modelo = null"
-          class="Filtro FiltroMarca"
+          class="Filtro prim"
           bg-color='white'
           label-color='black'
         >
@@ -39,7 +40,7 @@
           @filter="filterFnModelo"
           behavior="menu"
           use-chips
-          class="Filtro FiltroModelo"
+          class="Filtro"
           bg-color='white'
           label-color='black'
           v-if="marca.length==1"
@@ -63,7 +64,7 @@
           @filter="filterFnModelo"
           behavior="menu"
           use-chips
-          class="Filtro FiltroModelo"
+          class="Filtro"
           bg-color='white'
           label-color='black'
           disable
@@ -83,7 +84,7 @@
           type="number"
           label="Preço de"
           filled
-          class="Filtro FiltroPrecoMin"
+          class="Filtro"
           bg-color='white'
           label-color='black'
         />
@@ -93,7 +94,7 @@
           type="number"
           label="Preço até"
           filled
-          class="Filtro FiltroPrecoMax"
+          class="Filtro"
           bg-color='white'
           label-color='black'
         />
@@ -103,7 +104,7 @@
           type="number"
           label="Ano de"
           filled
-          class="Filtro FiltroAnoMin"
+          class="Filtro last"
           bg-color='white'
           label-color='black'
         />
@@ -113,7 +114,7 @@
           type="number"
           label="Ano até"
           filled
-          class="Filtro FiltroAnoMax"
+          class="Filtro prim"
           bg-color='white'
           label-color='black'
         />
@@ -127,7 +128,7 @@
           emit-value
           map-options
           use-chips
-          class="Filtro FiltroCombustivel"
+          class="Filtro"
           bg-color='white'
           label-color='black'
         >
@@ -148,7 +149,7 @@
           type="number"
           label="Quilómetros de"
           filled
-          class="Filtro FiltroKMmin"
+          class="Filtro"
           bg-color='white'
           label-color='black'
         />
@@ -158,25 +159,34 @@
           type="number"
           label="Quilómetros até"
           filled
-          class="Filtro FiltroKMmax"
+          class="Filtro last"
           bg-color='white'
           label-color='black'
         />
     </div>
 
-    <div class="OrderSection">
+    <div class="OrderSectionPesquisa">
       <q-separator color="blue-grey-4" inset />
-      <p class="OrderTitle">Ordenar por</p>
-      <q-select
-          filled
-          v-model="ordem"
-          :options="OrdemOptions"
-          behavior="menu"
-          class="Order"
-          bg-color='white'
-          label-color='black'
-          @update:model-value="val => $emit('Ordena', val)"
-        />
+      <p class="OrderTitlePesquisa">Ordenar por</p>
+      <div class='row'>
+        <q-select
+            filled
+            v-model="ordem"
+            :options="OrdemOptions"
+            behavior="menu"
+            class="OrderPesquisa"
+            bg-color='white'
+            label-color='black'
+          />
+        <q-btn color="primary" @click="$emit('Pesquisa')" class="ButtonPesquisa">
+          <div class="row items-center no-wrap">
+            <q-icon name="search" color="white" />
+            <div class="text-center Pesquisar" style="margin-left:5px;">
+              Pesquisar
+            </div>
+          </div>
+        </q-btn>
+      </div>
     </div>
   </div>
 </template>
@@ -455,20 +465,28 @@ export default defineComponent({
 
 .grid-container {
   display: grid;
-  grid-template-columns: 23% 18% 18% 18% 23%;
+  grid-template-columns: auto auto auto auto auto;
 }
 
-.OrderSection{
+.OrderSectionPesquisa{
   margin-top: 20px;
 }
 
-.Order{
+.OrderPesquisa{
   margin-top: 10px;
+  margin-left: 45px;
+
+  width: 500px;
+}
+
+.ButtonPesquisa{
+  margin-top: 10px;
+  max-width: 200px;
   margin-left: 45px;
   margin-right: 45px;
 }
 
-.OrderTitle{
+.OrderTitlePesquisa{
   margin-top: 10px;
   margin-bottom: 0px;
   margin-left: 45px;
@@ -479,6 +497,18 @@ export default defineComponent({
   background-color: rgba(197, 197, 197, 0.8);
   padding-bottom: 20px;
   padding-top: 10px;
+}
+
+@media (max-width: 1071px) {
+  .OrderPesquisa{
+    width: 1000px;
+    margin-right: 45px;
+  }
+
+  .ButtonPesquisa{
+    width: 1000px;
+    max-width: 1000px;
+  }
 }
 
 @media (max-width: 780px) {
@@ -500,6 +530,12 @@ export default defineComponent({
   .Filtros{
     padding-right: 10px;
     padding-left: 0px;
+  }
+}
+
+@media (max-width: 235px) {
+  .Pesquisar{
+    display: none
   }
 }
 </style>

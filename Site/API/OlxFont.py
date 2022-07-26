@@ -120,9 +120,9 @@ class OLXGather:
                 if(i < (len(c['Link_foto'])) ):
                     link_foto += ' '
 
-            carro = Carro( c['Anunciante'], c['Marca'], c['Modelo'], c['Versão'], c['Combustível'], c['Mês de Registo'], 
-                           int(c['Ano']), quilometros, cilindrada, potencia, c['Cor'], c['Tipo de cor'], c['Tipo de Caixa'],
-                           int(c['Nº de portas']), c['Origem'], c['Condição'], float(c['PRECO']), link_foto, c['Titulo'],
+            carro = Carro( c['Anunciante'].title(), c['Marca'].title(), c['Modelo'].title(), c['Versão'].title(), c['Combustível'].title(), c['Mês de Registo'].title(), 
+                           int(c['Ano']), quilometros, cilindrada, potencia, c['Cor'].title(), c['Tipo de cor'].title(), c['Tipo de Caixa'].title(),
+                           int(c['Nº de portas']), c['Origem'].title(), c['Condição'].title(), float(c['PRECO']), link_foto, c['Titulo'].title(),
                            c['Link_anuncio'], int(c['ID']), 'olx')
 
             carros[carro.getIDAnuncio()] = carro

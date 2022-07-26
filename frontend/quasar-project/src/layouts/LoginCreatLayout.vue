@@ -1,112 +1,90 @@
 <template>
   <q-layout view="lHh Lpr lFf">
-    <q-header elevated>
-      <q-toolbar>
-        <q-btn
-          flat
-          dense
-          round
-          icon="menu"
-          aria-label="Menu"
-          @click="toggleLeftDrawer"
-        />
-
-        <q-toolbar-title>
-          Quasar App
-        </q-toolbar-title>
-
-        <div>Quasar v{{ $q.version }}</div>
-      </q-toolbar>
-    </q-header>
-
-    <q-drawer
-      v-model="leftDrawerOpen"
-      show-if-above
-      bordered
-    >
-      <q-list>
-        <q-item-label
-          header
-        >
-          Menu
-        </q-item-label>
-
-        <SideBarContent />
-      </q-list>
-    </q-drawer>
-
     <q-page-container>
-      <router-view />
+      <q-bar dark class="bg-primary text-white BarraPaginaIndex">
+        <div class="col text-left text-weight-bold">
+          <q-img
+            src="../../public/icons/logo.png"
+            spinner-color="white"
+            class="logoIndexPage"
+            fit="contain"
+            @click="goTo('')"
+          />
+        </div>
+        <q-btn-group>
+          <q-btn flat color="white" label="Login" icon="person" @click="goTo('login')" />
+          <q-separator color="white" vertical inset />
+          <q-btn flat color="white" label="Criar Conta" @click="goTo('creat')" />
+        </q-btn-group>
+      </q-bar>
+
+      <div class="FormContainer" >
+        <router-view />
+      </div>
+
     </q-page-container>
   </q-layout>
 </template>
 
 <script>
-import { ref } from 'vue'
-import SideBarContent from 'components/SideBarContent.vue'
-
-const linksList = [
-  {
-    title: 'Docs',
-    caption: 'quasar.dev',
-    icon: 'school',
-    link: 'https://quasar.dev'
-  },
-  {
-    title: 'Github',
-    caption: 'github.com/quasarframework',
-    icon: 'code',
-    link: 'https://github.com/quasarframework'
-  },
-  {
-    title: 'Discord Chat Channel',
-    caption: 'chat.quasar.dev',
-    icon: 'chat',
-    link: 'https://chat.quasar.dev'
-  },
-  {
-    title: 'Forum',
-    caption: 'forum.quasar.dev',
-    icon: 'record_voice_over',
-    link: 'https://forum.quasar.dev'
-  },
-  {
-    title: 'Twitter',
-    caption: '@quasarframework',
-    icon: 'rss_feed',
-    link: 'https://twitter.quasar.dev'
-  },
-  {
-    title: 'Facebook',
-    caption: '@QuasarFramework',
-    icon: 'public',
-    link: 'https://facebook.quasar.dev'
-  },
-  {
-    title: 'Quasar Awesome',
-    caption: 'Community Quasar projects',
-    icon: 'favorite',
-    link: 'https://awesome.quasar.dev'
-  }
-]
-
 export default {
   name: 'LoginCreateLayout',
 
-  components: {
-    SideBarContent
-  },
-
   setup () {
-    const leftDrawerOpen = ref(false)
-
     return {
-      essentialLinks: linksList,
-      leftDrawerOpen,
-      toggleLeftDrawer () {
-        leftDrawerOpen.value = !leftDrawerOpen.value
+      goTo (path) {
+        window.location = '#/' + path
       }
     }
   }
 }
 </script>
+
+<style>
+.FormContainer{
+  width: 30vw;
+
+  margin-top: 50px;
+  margin-left: 50px;
+
+  max-height: calc(100vh - 100px);
+}
+
+.BarraPaginaIndex {
+  height: 70px;
+
+  border-style: none none solid none;
+  border-color: #F0F0F0;
+  border-width: 2px;
+}
+
+.logoIndexPage {
+  height: 55px;
+  max-width: 150px;
+  margin: 20px;
+}
+
+.logoIndexPage:hover {
+  cursor: pointer;
+}
+
+@media (max-width: 1080px) {
+  .FormContainer{
+    width: 35vw;
+  }
+}
+
+@media (max-width: 662px) {
+  .FormContainer{
+    width: calc(100vw - 100px);
+    margin-right: 50px;
+  }
+}
+
+@media (max-width: 600px) {
+  .logoIndexPage {
+    max-width: 100px;
+    margin-left: 5px;
+  }
+}
+</style>

@@ -36,35 +36,48 @@ class UserDAO:
         except:
             return None
     
+    def getData(self, id_user: int) -> dict:
+        _, cursor = connectToDB()
+
+        query = """
+            SELECT * FROM carvago.User 
+                where idUser = '%s';
+        """ % (str(id_user))
+            
+        try:
+            cursor.execute(query)
+            result = cursor.fetchone()
+
+            res = {}
+            res['nome'] = result[1]
+            res['email'] = result[2]
+            res['email_validado'] = False
+
+            return res
+        except:
+            return None
+
     def register(self, user: User) -> int:
         
         connection, cursor = connectToDB()
         
-        # falta verificar se o user já existe
-        existe = False
+        query = """
+            INSERT INTO carvago.User
+                VALUES 
+                    (default, '%s', '%s', '%s');
+        """ % (user.getNome(), user.getEmail(), user.getPassword())
 
-        if ( (not existe) and user.getIdUser() <= 0):
-            
-            query = """
-                INSERT INTO carvago.User
-                    VALUES 
-                        (default, %s, '%s', '%s');
-            """ % (user.getNome(), user.getEmail(), user.getPassword())
+        cursor.execute(query)
+        connection.commit()
 
-            cursor.execute(query)
-            connection.commit()
+        query = """
+            SELECT LAST_INSERT_ID();
+        """
 
-            query = """
-                SELECT LAST_INSERT_ID();
-            """
+        cursor.execute(query)
+        r = cursor.fetchone()
 
-            cursor.execute(query)
-            r = cursor.fetchone()
-
-            return int(r[0])
-
-        else:
-            return user.getIdUser()
+        return int(r[0])
 
     def getInteressesUser(self, id_user: int) -> list:
         _, cursor = connectToDB()
@@ -166,7 +179,7 @@ class UserDAO:
                 INSERT INTO carvago.Interesse
                     VALUES
                         (%s, '%s', '%s', '%s', %s)
-            """ % ( str(id_user),  interesse.getMarca(), interesse.getModelo(), interesse.getFonte(), idFiltro)
+            """ % ( str(id_user),  interesse.getMarca().lower(), interesse.getModelo().lower(), interesse.getFonte(), idFiltro)
             
             cursor.execute(query)
             connection.commit()

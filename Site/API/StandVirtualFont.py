@@ -57,11 +57,11 @@ class StandVirtualGather:
             
             res = {}
 
-            res['ID'] = soup.find_all(id="ad_id")[0].contents[0].strip()
             res['PRECO'] = soup.find_all('span','offer-price__number')[0].contents[0].strip().replace(" ","")
             res['Link_foto'] = []
             res['Titulo'] = soup.find_all('h1','offer-title big-text')[0].contents[2].strip()
             res['Link_anuncio'] = link
+            res['ID'] = soup.find_all(id="ad_id")[0].contents[0].strip()
 
             temp1 = soup.find_all('div','photo-item')
             for img in temp1:
@@ -120,9 +120,9 @@ class StandVirtualGather:
                 if(i < (len(c['Link_foto'])) ):
                     link_foto += ' '
 
-            carro = Carro( c['Anunciante'], c['Marca'], c['Modelo'], c['Versão'], c['Combustível'], c['Mês de Registo'], 
-                           int(c['Ano']), quilometros, cilindrada, potencia, c['Cor'], c['Tipo de cor'], c['Tipo de Caixa'],
-                           int(c['Nº de portas']), c['Origem'], c['Condição'], float(c['PRECO']), link_foto, c['Titulo'],
+            carro = Carro( c['Anunciante'].title(), c['Marca'].title(), c['Modelo'].title(), c['Versão'].title(), c['Combustível'].title(), c['Mês de Registo'].title(), 
+                           int(c['Ano']), quilometros, cilindrada, potencia, c['Cor'].title(), c['Tipo de cor'].title(), c['Tipo de Caixa'].title(),
+                           int(c['Nº de portas']), c['Origem'].title(), c['Condição'].title(), float(c['PRECO']), link_foto, c['Titulo'].title(),
                            c['Link_anuncio'], int(c['ID']), 'stand-virtual')
 
             carros[carro.getIDAnuncio()] = carro

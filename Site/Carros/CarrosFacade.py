@@ -45,3 +45,15 @@ class CarrosFacade:
             res.append(carroSerializable)
         
         return res
+
+    def getTodosCarrosAvailable(self, id_user : int, marca : list, modelo : str, filtro, num_pagina : int, ordem : str) -> list:
+        carrosDAO = CarrosDAO.instance()
+
+        temp = carrosDAO.getAllCarrosAvailable(id_user, marca, modelo, filtro, num_pagina, ordem)
+        res = []
+        for carro in temp:
+            carroSerializable = carro.serialize()
+            res.append(carroSerializable)
+        pages = carrosDAO.getNumPagesCarrosAvailable(marca, modelo, filtro, num_pagina)
+        
+        return res, pages
