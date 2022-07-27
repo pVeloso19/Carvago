@@ -8,6 +8,9 @@ import json, os
 from Carros.CarrosFacade import CarrosFacade
 from Users.UserFacade import UserFacade
 
+
+temp = None
+
 class REST_API:
     
     def __init__(self):
@@ -64,6 +67,12 @@ class REST_API:
 
 
 
+
+
+
+
+
+
         @self.app.route("/subscription", methods=["GET", "POST"])
         def subscription():
             """
@@ -76,33 +85,55 @@ class REST_API:
                     headers={"Access-Control-Allow-Origin": "*"}, content_type="application/json")
 
             subscription_token = request.get_json("subscription_token")
-            return Response(status=201, mimetype="application/json")
+
+            global temp
+            temp = subscription_token['subscription_token']
+
+            # Registrar o token recebido
+
+            return Response(status=201, headers={"Access-Control-Allow-Origin": "*"}, mimetype="application/json")
         
         @self.app.route("/push/", methods=['POST'])
         @cross_origin(origin='*',headers=['Content-Type','Authorization'])
         def push():
             message = "Push Test v1"
-            print("is_json",request.is_json)
 
-            if not request.json or not request.json.get('sub_token'):
+            global temp
+            
+            if temp is None:
+                print('aqui')
                 return jsonify({'failed':1})
 
-            print("request.json",request.json)
+            print(temp)
 
-            token = request.json.get('sub_token')
+            token = temp
             try:
-                token = json.loads(token)
                 self.send_web_push(token, message)
                 return jsonify({'success':1})
             except Exception as e:
                 print("error",e)
                 return jsonify({'failed':str(e)})
-        
-        #@self.app.route('/sw.js', methods=['GET', 'POST'])
-        #def download():
-        #    uploads = os.path.join(self.app.root_path, '')
-        #    print(uploads)
-        #    return send_from_directory(directory=uploads, path=uploads, filename='sw.js')
+
+
+
+
+
+
+
+
+        @self.app.route('/<path:filename>', methods=['GET', 'POST'])
+        def download(filename):
+            # Appending app path to upload folder path within app root folder
+            uploads = os.path.join(self.app.root_path, 'templates\\static')
+            # Returning file from appended path
+            return send_from_directory(directory=uploads, path=uploads, filename=filename)
+
+        @self.app.route('/')
+        def hello():
+            return render_template('index.html')
+
+
+
 
 
 

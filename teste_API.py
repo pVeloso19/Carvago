@@ -17,17 +17,7 @@ import json
 #               TEST POST
 ############################################
 
-sub_token = {
-    "endpoint":"https://wns2-db5p.notify.windows.com/w/?token=BQYAAACL9zHyHeThR9jd00vP42k7HTELMKK%2bCmSVDWhH9hOb3FeYXMoY2p38Q2wauQtaBIcAwvTGN9jgtq3Mfxu%2blN8pJyBIhxGGzo2zTX5f%2fIUPh3X%2fnN9dC%2f%2frt%2fodNnLfnwr%2fGvEKv03LNiyKz7zp%2bafv2xFnM5hbWMSHfQyXi%2b5%2bavxPwme6GnQrOatpXt4Lgfg57GUJZoPTdEW4mELBiisRWwZrDNQZuVrDFIIF93JqP3%2bYTsLMfnbuYgwB3qZbclXd3M0RWUTrp81Ednpin7qRfI9yQ8YJIMhEzjbBPyaCCb%2f5FeDxsM32Hxm11FRQ1yA%3d",
-    "expirationTime":None,
-    "keys":{
-        "p256dh":"BJnaJTnky1moAuRLDXuDJepkFln05zUslJC5oRSMIwnBHroJWNEte9UBEoUS_gpANGVnHid_nscxZdNxjAF2sD4",
-        "auth":"G_srovDtzjyOE80nyOGTRQ"
-    }
-}
-final = {}
-final['sub_token'] = sub_token
-response = requests.post( "http://localhost:5000/push/", json=json.dumps(final) )
+response = requests.post( "http://localhost:5000/push/")
 print(response)
 
 #############################################

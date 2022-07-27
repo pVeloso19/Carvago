@@ -74,6 +74,19 @@ import axios from 'axios'
 
 import URL from '../url.js'
 
+function urlB64ToUint8Array (base64String) {
+  const padding = '='.repeat((4 - base64String.length % 4) % 4)
+  const base64 = (base64String + padding).replace(/-/g, '+').replace(/_/g, '/')
+
+  const rawData = window.atob(base64)
+  const outputArray = new Uint8Array(rawData.length)
+
+  for (let i = 0; i < rawData.length; ++i) {
+    outputArray[i] = rawData.charCodeAt(i)
+  }
+  return outputArray
+}
+
 export default {
   name: 'InicioCreatPage',
 
@@ -100,10 +113,31 @@ export default {
 
         if ('serviceWorker' in navigator && 'PushManager' in window) {
           console.log('Service Worker and Push is supported')
-
-          await navigator.serviceWorker.register('../../public/sw.js')
+          const url = URL.URL + '/sw.js'
+          navigator.serviceWorker.register(url)
             .then(function (swReg) {
               console.log('Service Worker is registered', swReg)
+
+              const applicationServerPublicKey = localStorage.getItem('applicationServerPublicKey')
+              const applicationServerKey = urlB64ToUint8Array(applicationServerPublicKey)
+              swReg.pushManager.subscribe({
+                userVisibleOnly: true,
+                applicationServerKey: applicationServerKey
+              }).then(async function (subscription) {
+                console.log('User is subscribed.')
+                localStorage.setItem('sub_token', JSON.stringify(subscription))
+
+                const userJogos = await axios({
+                  method: 'post',
+                  url: URL.URL + '/subscription',
+                  data: { subscription_token: subscription }
+                })
+
+                await userJogos.data
+              }).catch(function (error) {
+                res = false
+                console.error('Service Worker Error', error)
+              })
             })
             .catch(function (error) {
               res = false
@@ -133,7 +167,6 @@ export default {
           // erro
         } else {
           const subscreveu = await initPushSubscription()
-          alert(subscreveu)
 
           if (!subscreveu) {
             $q.notify({
