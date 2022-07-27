@@ -1,4 +1,5 @@
 import requests
+import json
 
 """
 ##### TODO #####
@@ -12,6 +13,22 @@ import requests
 # Criar User
 """
 
+############################################
+#               TEST POST
+############################################
+
+sub_token = {
+    "endpoint":"https://wns2-db5p.notify.windows.com/w/?token=BQYAAACL9zHyHeThR9jd00vP42k7HTELMKK%2bCmSVDWhH9hOb3FeYXMoY2p38Q2wauQtaBIcAwvTGN9jgtq3Mfxu%2blN8pJyBIhxGGzo2zTX5f%2fIUPh3X%2fnN9dC%2f%2frt%2fodNnLfnwr%2fGvEKv03LNiyKz7zp%2bafv2xFnM5hbWMSHfQyXi%2b5%2bavxPwme6GnQrOatpXt4Lgfg57GUJZoPTdEW4mELBiisRWwZrDNQZuVrDFIIF93JqP3%2bYTsLMfnbuYgwB3qZbclXd3M0RWUTrp81Ednpin7qRfI9yQ8YJIMhEzjbBPyaCCb%2f5FeDxsM32Hxm11FRQ1yA%3d",
+    "expirationTime":None,
+    "keys":{
+        "p256dh":"BJnaJTnky1moAuRLDXuDJepkFln05zUslJC5oRSMIwnBHroJWNEte9UBEoUS_gpANGVnHid_nscxZdNxjAF2sD4",
+        "auth":"G_srovDtzjyOE80nyOGTRQ"
+    }
+}
+final = {}
+final['sub_token'] = sub_token
+response = requests.post( "http://localhost:5000/push/", json=json.dumps(final) )
+print(response)
 
 #############################################
 #               TESTE
@@ -19,12 +36,12 @@ import requests
 
 # 1) Login
 
-response = requests.get( "http://localhost:5000/login", params={'email':'miguelveloso@mail.pt', 'password':'Pedro1234'} )
-dados = response.json()
+#response = requests.get( "http://localhost:5000/login", params={'email':'miguelveloso@mail.pt', 'password':'Pedro1234'} )
+#dados = response.json()
 
-identificador = int(dados['resultado'])
+#identificador = int(dados['resultado'])
 
-print(identificador)
+#print(identificador)
 
 # 2) Interesses de um user
 
@@ -58,10 +75,10 @@ print(identificador)
 #print(dados)
 
 # 7) Get todos os carros com o uso de filtros
-marcas = []
-marcas.append('ford')
-marcas.append('VW')
-response = requests.get( "http://localhost:5000/AllCarsAvailable", params={'ID':identificador, 'Marca': marcas, 'Modelo':'focus', 'AnoMinimo':2020, 'AnoMaximo':'', 'PrecoMinimo':'', 'PrecoMaximo':22000, 'Combustivel':'', 'KMMinimo':'', 'KMMaximo':'', 'Pagina': 1} )
-dados = response.json()
+#marcas = []
+#marcas.append('ford')
+#marcas.append('VW')
+#response = requests.get( "http://localhost:5000/AllCarsAvailable", params={'ID':identificador, 'Marca': marcas, 'Modelo':'focus', 'AnoMinimo':2020, 'AnoMaximo':'', 'PrecoMinimo':'', 'PrecoMaximo':22000, 'Combustivel':'', 'KMMinimo':'', 'KMMaximo':'', 'Pagina': 1} )
+#dados = response.json()
 
-print(dados)
+#print(dados)

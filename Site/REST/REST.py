@@ -1,4 +1,9 @@
-from flask import Flask, request, jsonify, render_template
+from flask import Flask, request, Response, jsonify, render_template, send_from_directory
+from flask_cors import CORS, cross_origin
+
+from pywebpush import webpush, WebPushException
+
+import json, os
 
 from Carros.CarrosFacade import CarrosFacade
 from Users.UserFacade import UserFacade
@@ -7,14 +12,37 @@ class REST_API:
     
     def __init__(self):
         self.app = Flask(__name__)
+        
+        self.cors = CORS(self.app, resources={r"/foo": {"origins": "*"}})
+        self.app.config['CORS_HEADERS'] = 'Content-Type'
+        
+        self.app.config['SECRET_KEY'] = '9OLWxND4o83j4K4iuopO'
         self.app.config['JSON_AS_ASCII'] = False
 
         self.__carrosFacade = CarrosFacade()
         self.__userFacade = UserFacade()
 
+        self.DER_BASE64_ENCODED_PRIVATE_KEY_FILE_PATH = os.path.join(os.getcwd(),"private_key.txt")
+        self.DER_BASE64_ENCODED_PUBLIC_KEY_FILE_PATH = os.path.join(os.getcwd(),"public_key.txt")
+
+        self.VAPID_PRIVATE_KEY = open(self.DER_BASE64_ENCODED_PRIVATE_KEY_FILE_PATH, "r+").readline().strip("\n")
+        self.VAPID_PUBLIC_KEY = open(self.DER_BASE64_ENCODED_PUBLIC_KEY_FILE_PATH, "r+").read().strip("\n")
+
+        self.VAPID_CLAIMS = {
+            "sub": "mailto:develop@raturi.in"
+        }
+
     def init(self):
         self.define_PATH()
         self.app.run(debug=True, host='0.0.0.0', port=5000)
+    
+    def send_web_push(self, subscription_information, message_body):
+        return webpush(
+            subscription_info=subscription_information,
+            data=message_body,
+            vapid_private_key=self.VAPID_PRIVATE_KEY,
+            vapid_claims=self.VAPID_CLAIMS
+        )
 
     def define_PATH(self):
         
@@ -30,7 +58,57 @@ class REST_API:
             response.headers.add('Access-Control-Allow-Origin', '*')
 
             return response
+
+
+
+
+
+
+        @self.app.route("/subscription", methods=["GET", "POST"])
+        def subscription():
+            """
+                POST creates a subscription
+                GET returns vapid public key which clients uses to send around push notification
+            """
+
+            if request.method == "GET":
+                return Response(response=json.dumps({"public_key": self.VAPID_PUBLIC_KEY}),
+                    headers={"Access-Control-Allow-Origin": "*"}, content_type="application/json")
+
+            subscription_token = request.get_json("subscription_token")
+            return Response(status=201, mimetype="application/json")
         
+        @self.app.route("/push/", methods=['POST'])
+        @cross_origin(origin='*',headers=['Content-Type','Authorization'])
+        def push():
+            message = "Push Test v1"
+            print("is_json",request.is_json)
+
+            if not request.json or not request.json.get('sub_token'):
+                return jsonify({'failed':1})
+
+            print("request.json",request.json)
+
+            token = request.json.get('sub_token')
+            try:
+                token = json.loads(token)
+                self.send_web_push(token, message)
+                return jsonify({'success':1})
+            except Exception as e:
+                print("error",e)
+                return jsonify({'failed':str(e)})
+        
+        #@self.app.route('/sw.js', methods=['GET', 'POST'])
+        #def download():
+        #    uploads = os.path.join(self.app.root_path, '')
+        #    print(uploads)
+        #    return send_from_directory(directory=uploads, path=uploads, filename='sw.js')
+
+
+
+
+
+
         @self.app.route('/create', methods=['GET']) 
         def create():
             

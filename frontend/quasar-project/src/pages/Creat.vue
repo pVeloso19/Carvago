@@ -87,6 +87,39 @@ export default {
     const passRef = ref(null)
     const nomeRef = ref(null)
 
+    async function initPushSubscription () {
+      let res = true
+      try {
+        const userJogos = await axios({
+          method: 'get',
+          url: URL.URL + '/subscription'
+        })
+
+        const response = await userJogos.data
+        localStorage.setItem('applicationServerPublicKey', response.public_key)
+
+        if ('serviceWorker' in navigator && 'PushManager' in window) {
+          console.log('Service Worker and Push is supported')
+
+          await navigator.serviceWorker.register('../../public/sw.js')
+            .then(function (swReg) {
+              console.log('Service Worker is registered', swReg)
+            })
+            .catch(function (error) {
+              res = false
+              console.error('Service Worker Error', error)
+            })
+        } else {
+          res = false
+        }
+      } catch (e) {
+        alert(e)
+        res = false
+      }
+
+      return res
+    }
+
     return {
       goTo (path) {
         window.location = '#/' + path
@@ -99,6 +132,17 @@ export default {
         if (email.value.hasError || pass.value.hasError || nomeRef.value.hasError) {
           // erro
         } else {
+          const subscreveu = await initPushSubscription()
+          alert(subscreveu)
+
+          if (!subscreveu) {
+            $q.notify({
+              color: 'negative',
+              message: 'Registo falhou! - Push Not Supported.'
+            })
+            return
+          }
+
           const userJogos = await axios({
             method: 'get',
             url: URL.URL + '/create',
