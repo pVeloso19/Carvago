@@ -2,6 +2,7 @@ from API.StandVirtualFont import StandVirtualGather
 from API.OlxFont import OLXGather
 from Users.UserFacade import UserFacade
 
+import time
 
 class APIFacade:
     def __init__(self):
@@ -28,6 +29,7 @@ class APIFacade:
                 novos, vendidos = olx.getDados(interesses)
                 carros_novos.extend(novos)
                 id_carros_vendidos.extend(vendidos)
+            time.sleep(60*5)
 
         #Faz algo com os carros novos
         print('novos = [', end=' ,')

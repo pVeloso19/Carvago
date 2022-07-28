@@ -548,3 +548,26 @@ class CarrosDAO:
         import math
         return math.ceil(int(r[0]) / 10 )
 
+    def getImagensCarros(self) -> list:
+        _, cursor = connectToDB()
+
+        query = """
+            SELECT Link_foto, Titulo, Preco FROM carvago.Carros;
+        """
+
+        cursor.execute(query)
+        
+        imagens_links = []
+        from re import split
+        for r in cursor:
+            links = r[0]
+            links = split(' ', links)
+
+            temp = {}
+            temp['link_foto'] = links[0].strip()
+            temp['titulo'] = r[1]
+            temp['preco'] = float(r[2])
+            imagens_links.append(temp)
+        
+        return imagens_links
+

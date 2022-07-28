@@ -16,9 +16,9 @@ import json
 ############################################
 #               TEST POST
 ############################################
-
-response = requests.post( "http://localhost:5000/push/")
-print(response)
+identificador = 7
+response = requests.post( "http://localhost:5000/push", params={'ID':identificador})
+print(response.json())
 
 #############################################
 #               TESTE

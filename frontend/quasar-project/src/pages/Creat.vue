@@ -100,6 +100,50 @@ export default {
     const passRef = ref(null)
     const nomeRef = ref(null)
 
+    async function createAcount (subscreveu) {
+      let userJogos = null
+      if (subscreveu) {
+        const subscription = localStorage.getItem('sub_token')
+        userJogos = await axios({
+          method: 'post',
+          url: URL.URL + '/create',
+          params: { nome: nome.value, email: email.value, password: pass.value },
+          data: { subscription_token: subscription }
+        })
+      } else {
+        userJogos = await axios({
+          method: 'post',
+          url: URL.URL + '/create',
+          params: { nome: nome.value, email: email.value, password: pass.value }
+        })
+      }
+
+      const userJogosData = await userJogos.data
+
+      if (userJogosData.resultado > 0) {
+        email.value = ''
+        pass.value = ''
+        sessionStorage.setItem('IdentificadorCarvago', userJogosData.resultado)
+        window.location = '#/home'
+      } else {
+        if (userJogosData.resultado === -1) {
+          $q.notify({
+            color: 'negative',
+            message: 'Registo falhou! - Dados em falta.'
+          })
+        }
+
+        if (userJogosData.resultado === -3) {
+          $q.notify({
+            color: 'negative',
+            message: 'Impossivel criar conta - Email já está em uso'
+          })
+          email.value = null
+          pass.value = null
+        }
+      }
+    }
+
     async function initPushSubscription () {
       let res = true
       try {
@@ -126,14 +170,7 @@ export default {
               }).then(async function (subscription) {
                 console.log('User is subscribed.')
                 localStorage.setItem('sub_token', JSON.stringify(subscription))
-
-                const userJogos = await axios({
-                  method: 'post',
-                  url: URL.URL + '/subscription',
-                  data: { subscription_token: subscription }
-                })
-
-                await userJogos.data
+                await createAcount(true)
               }).catch(function (error) {
                 res = false
                 console.error('Service Worker Error', error)
@@ -169,42 +206,7 @@ export default {
           const subscreveu = await initPushSubscription()
 
           if (!subscreveu) {
-            $q.notify({
-              color: 'negative',
-              message: 'Registo falhou! - Push Not Supported.'
-            })
-            return
-          }
-
-          const userJogos = await axios({
-            method: 'get',
-            url: URL.URL + '/create',
-            params: { nome: nome.value, email: email.value, password: pass.value }
-          })
-
-          const userJogosData = await userJogos.data
-
-          if (userJogosData.resultado > 0) {
-            email.value = ''
-            pass.value = ''
-            sessionStorage.setItem('IdentificadorCarvago', userJogosData.resultado)
-            window.location = '#/home'
-          } else {
-            if (userJogosData.resultado === -1) {
-              $q.notify({
-                color: 'negative',
-                message: 'Registo falhou! - Dados em falta.'
-              })
-            }
-
-            if (userJogosData.resultado === -3) {
-              $q.notify({
-                color: 'negative',
-                message: 'Impossivel criar conta - Email já está em uso'
-              })
-              email.value = null
-              pass.value = null
-            }
+            await createAcount(false)
           }
         }
       },

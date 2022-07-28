@@ -7,6 +7,10 @@ class CarrosFacade:
     def __init__(self):
         pass
 
+    def getImagensCarros(self) -> list:
+        carrosDAO = CarrosDAO.instance()
+        return carrosDAO.getImagensCarros()
+
     def getTodosCarrosPorInteresse(self, id_user : int, marca : str, modelo : str) -> list:
         carrosDAO = CarrosDAO.instance()
 

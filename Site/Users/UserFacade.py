@@ -45,7 +45,7 @@ class UserFacade:
         # -1 Falha nos campos
         # -3 email inválido
         # maior que zero sucesso. O valor corresponde ao id do utilizador
-    def createAccount(self, nome : str, email : str, password : str) -> int:
+    def createAccount(self, nome : str, email : str, password : str, token : dict) -> int:
         if(nome is None or nome==''):
             return -1
         
@@ -60,10 +60,14 @@ class UserFacade:
         user = user_DAO.getUserByEmail(email)
 
         if(user is None):
-            return user_DAO.register(User(-1, nome, email, password))
+            return user_DAO.register(User(-1, nome, email, password), token)
         else:
             return -3
     
+    def registerToken(self, id_user : int, token : dict):
+        user_DAO = UserDAO.instance()
+        user_DAO.registerToken(id_user, token)
+
     def getUserData(self, id_user : int) -> dict:
         user_DAO = UserDAO.instance()
         return user_DAO.getData(id_user)
@@ -105,9 +109,14 @@ class UserFacade:
         return True
     
     def removeInteresse(self, id_user : int, interesses : list) -> bool:
-        #apagar filtros de notificação
+        user_DAO = UserDAO.instance()
 
         #apagar os interesses
+        lista_id_filtros = user_DAO.removeInteresseUser(id_user, interesses)
+        
+        #apagar filtros de notificação
+        if (len(lista_id_filtros) > 0) :
+            user_DAO.removeFiltrosNotificacoes(interesses, lista_id_filtros)
 
         return True
 
@@ -131,3 +140,7 @@ class UserFacade:
         user = User(-3, nome, email, password)
         user_DAO = UserDAO.instance()
         return user_DAO.register(user)
+
+    def getTokenUser(self, id_user : int) -> dict:
+        user_DAO = UserDAO.instance()
+        return user_DAO.getTokenUser(id_user)

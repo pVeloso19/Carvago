@@ -80,7 +80,7 @@
     </q-drawer>
 
     <q-page-container>
-      <router-view />
+      <router-view :Notificacoes="notificacoes"/>
     </q-page-container>
   </q-layout>
 </template>
@@ -107,6 +107,8 @@ export default {
 
     const mailValidado = ref(true)
 
+    const notificacoes = ref(true)
+
     function getLink () {
       return 'https://robohash.org/' + nome.value + '?set=set2'
     }
@@ -127,6 +129,7 @@ export default {
         userJogosData = userJogosData.resultado
         nome.value = userJogosData.nome
         mailValidado.value = userJogosData.email_validado
+        notificacoes.value = userJogosData.aceitou_notificacoes
       }
     })
 
@@ -143,7 +146,8 @@ export default {
 
       nome,
       getLink,
-      mailValidado
+      mailValidado,
+      notificacoes
     }
   }
 }

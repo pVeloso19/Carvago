@@ -1,15 +1,13 @@
 from flask import Flask, request, Response, jsonify, render_template, send_from_directory
 from flask_cors import CORS, cross_origin
+#@cross_origin(origin='*',headers=['Content-Type','Authorization'])
 
-from pywebpush import webpush, WebPushException
+from pywebpush import webpush
 
 import json, os
 
 from Carros.CarrosFacade import CarrosFacade
 from Users.UserFacade import UserFacade
-
-
-temp = None
 
 class REST_API:
     
@@ -38,14 +36,6 @@ class REST_API:
     def init(self):
         self.define_PATH()
         self.app.run(debug=True, host='0.0.0.0', port=5000)
-    
-    def send_web_push(self, subscription_information, message_body):
-        return webpush(
-            subscription_info=subscription_information,
-            data=message_body,
-            vapid_private_key=self.VAPID_PRIVATE_KEY,
-            vapid_claims=self.VAPID_CLAIMS
-        )
 
     def define_PATH(self):
         
@@ -62,17 +52,6 @@ class REST_API:
 
             return response
 
-
-
-
-
-
-
-
-
-
-
-
         @self.app.route("/subscription", methods=["GET", "POST"])
         def subscription():
             """
@@ -84,43 +63,19 @@ class REST_API:
                 return Response(response=json.dumps({"public_key": self.VAPID_PUBLIC_KEY}),
                     headers={"Access-Control-Allow-Origin": "*"}, content_type="application/json")
 
-            subscription_token = request.get_json("subscription_token")
+            try:
+                subscription_token = request.get_json("subscription_token")
+                subscription_token = subscription_token['subscription_token']
+                subscription_token = json.loads(subscription_token)
+            except:
+                subscription_token = None
 
-            global temp
-            temp = subscription_token['subscription_token']
-
-            # Registrar o token recebido
+            if subscription_token is not None:
+                id_user = int(request.args.get('ID'))
+                self.__userFacade.registerToken(id_user, subscription_token)
 
             return Response(status=201, headers={"Access-Control-Allow-Origin": "*"}, mimetype="application/json")
         
-        @self.app.route("/push/", methods=['POST'])
-        @cross_origin(origin='*',headers=['Content-Type','Authorization'])
-        def push():
-            message = "Push Test v1"
-
-            global temp
-            
-            if temp is None:
-                print('aqui')
-                return jsonify({'failed':1})
-
-            print(temp)
-
-            token = temp
-            try:
-                self.send_web_push(token, message)
-                return jsonify({'success':1})
-            except Exception as e:
-                print("error",e)
-                return jsonify({'failed':str(e)})
-
-
-
-
-
-
-
-
         @self.app.route('/<path:filename>', methods=['GET', 'POST'])
         def download(filename):
             # Appending app path to upload folder path within app root folder
@@ -132,22 +87,21 @@ class REST_API:
         def hello():
             return render_template('index.html')
 
-
-
-
-
-
-
-
-
-        @self.app.route('/create', methods=['GET']) 
+        @self.app.route('/create', methods=['POST']) 
         def create():
             
             nome = request.args.get('nome')
             email = request.args.get('email')
             password = request.args.get('password')
+
+            try:
+                subscription_token = request.get_json("subscription_token")
+                subscription_token = subscription_token['subscription_token']
+                subscription_token = json.loads(subscription_token)
+            except:
+                subscription_token = None
             
-            res = self.__userFacade.createAccount(nome, email, password)
+            res = self.__userFacade.createAccount(nome, email, password, subscription_token)
 
             response = jsonify(dict( resultado = res))
             response.headers.add('Access-Control-Allow-Origin', '*')
@@ -188,6 +142,16 @@ class REST_API:
             res = self.__carrosFacade.getTodosCarrosPorInteresse(id_user, marca, modelo)
 
             response = jsonify(dict( carros = res))
+            response.headers.add('Access-Control-Allow-Origin', '*')
+
+            return response
+        
+        @self.app.route('/ImagensCars', methods=['GET']) 
+        def ImagensCars():
+            
+            res = self.__carrosFacade.getImagensCarros()
+
+            response = jsonify(dict( images = res))
             response.headers.add('Access-Control-Allow-Origin', '*')
 
             return response
@@ -327,3 +291,27 @@ class REST_API:
             response.headers.add('Access-Control-Allow-Origin', '*')
 
             return response
+
+        @self.app.route("/push", methods=['POST'])
+        @cross_origin(origin='*',headers=['Content-Type','Authorization'])
+        def push():
+            message = "Novo carro disponivel!!!"
+
+            id_user = int(request.args.get('ID'))
+            
+            token = self.__userFacade.getTokenUser(id_user)
+
+            if (token is None):
+                return jsonify({'failed':str(e)})
+
+            try:
+                _ = webpush(
+                    subscription_info=token,
+                    data=message,
+                    vapid_private_key=self.VAPID_PRIVATE_KEY,
+                    vapid_claims=self.VAPID_CLAIMS
+                )
+                return jsonify({'success':1})
+            except Exception as e:
+                print("error",e)
+                return jsonify({'failed':str(e)})

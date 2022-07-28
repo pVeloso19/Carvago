@@ -15,6 +15,18 @@ CREATE SCHEMA IF NOT EXISTS `carvago` DEFAULT CHARACTER SET utf8 ;
 USE `carvago` ;
 
 -- -----------------------------------------------------
+-- Table `carvago`.`PushInfo`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `carvago`.`PushInfo` (
+  `idPushInfo` INT NOT NULL AUTO_INCREMENT,
+  `endpoint` LONGBLOB NOT NULL,
+  `p256dh` LONGBLOB NOT NULL,
+  `auth` LONGBLOB NOT NULL,
+  `expirationTime` VARCHAR(255) NULL,
+  PRIMARY KEY (`idPushInfo`))
+ENGINE = InnoDB;
+
+-- -----------------------------------------------------
 -- Table `carvago`.`User`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `carvago`.`User` (
@@ -22,7 +34,16 @@ CREATE TABLE IF NOT EXISTS `carvago`.`User` (
   `Nome` VARCHAR(45) NULL,
   `Email` VARCHAR(255) NOT NULL,
   `Password` VARCHAR(45) NOT NULL,
-  PRIMARY KEY (`idUser`))
+  `idPushInfo` INT NULL,
+  `emailValidado` TINYINT NOT NULL,
+  `aceitouNotificacoes` TINYINT NOT NULL,
+  PRIMARY KEY (`idUser`),
+  INDEX `fk_User_PushInfo1_idx` (`idPushInfo` ASC) VISIBLE,
+  CONSTRAINT `fk_User_PushInfo1`
+    FOREIGN KEY (`idPushInfo`)
+    REFERENCES `carvago`.`PushInfo` (`idPushInfo`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
 
@@ -151,7 +172,7 @@ SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
 
 INSERT INTO carvago.User
 	VALUES
-    (default, 'Miguel Veloso', 'miguelveloso@mail.pt', 'Pedro1234');
+    (default, 'Miguel Veloso', 'miguelveloso@mail.pt', 'Pedro1234', NULL, FALSE, FALSE);
 
 INSERT INTO carvago.Filtros_Notificacao
 	VALUES

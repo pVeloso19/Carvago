@@ -7,13 +7,13 @@ def main0():
     
     apiFacade = APIFacade()
     while True:
-        #apiFacade.getDados()
+        apiFacade.getDados()
         print('INICIOU\n\n')
         time.sleep(60*60*2) # De 2 em 2 horas atualiza os dados
 
 def main():
     # Inicia o modulo para obter os dados de x em x horas
-    threading.Thread(target = main0, args=(), daemon=True).start()
+    #threading.Thread(target = main0, args=(), daemon=True).start()
     
     # Inicia a API REST
     rest_api = REST_API()
