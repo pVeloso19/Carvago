@@ -1,6 +1,4 @@
-
 import re
-import json
 
 class Carro:
     

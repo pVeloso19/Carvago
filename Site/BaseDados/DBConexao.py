@@ -2,7 +2,7 @@ import mysql.connector
 
 DB_HOST = 'localhost'
 DB_USER = 'root'
-DB_PASS = '#######'
+DB_PASS = 'Pedro1234'
 DB_NAME = 'carvago'
 
 def connectToDB():
