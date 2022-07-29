@@ -32,44 +32,37 @@
 ## Resultado Final
 
 ### Página inicial (Sem Login efetuado)
-<img src="https://cdn.discordapp.com/attachments/1002574979252105312/1002626682865340456/Captura_de_Ecra_8.png?width=971&height=546">
+<img src="https://cdn.discordapp.com/attachments/1002574979252105312/1002626682865340456/Captura_de_Ecra_8.png?width=971&height=546" >
+
 <img src="https://cdn.discordapp.com/attachments/1002574979252105312/1002626522122825838/Screenshot_20220729_181819_com.huawei.browser.jpg?width=255&height=545" height="400px">
 
 ### Login/Criar conta
-<picture>
-  <img alt="Login PC" src="https://cdn.discordapp.com/attachments/1002574979252105312/1002626683221848185/Captura_de_Ecra_9.png?width=971&height=546" style="max-height: 232px;">
-</picture>
+<img alt="Login PC" src="https://cdn.discordapp.com/attachments/1002574979252105312/1002626683221848185/Captura_de_Ecra_9.png?width=971&height=546" >
 
-<img alt="Login Tele" src="https://cdn.discordapp.com/attachments/1002574979252105312/1002626521887952906/Screenshot_20220729_181822_com.huawei.browser.jpg?width=255&height=545" style="max-height: 232px;">
+<img alt="Login Tele" src="https://cdn.discordapp.com/attachments/1002574979252105312/1002626521887952906/Screenshot_20220729_181822_com.huawei.browser.jpg?width=255&height=545" height="400px">
 
-<picture>
-  <img alt="Criar Conta PC" src="https://cdn.discordapp.com/attachments/1002574979252105312/1002626683762921482/Captura_de_Ecra_10.png?width=971&height=546" style="max-height: 232px;">
-</picture>
+<img alt="Criar Conta PC" src="https://cdn.discordapp.com/attachments/1002574979252105312/1002626683762921482/Captura_de_Ecra_10.png?width=971&height=546" >
 
-<picture>
-  <img alt="Criar Conta Tele" src="https://cdn.discordapp.com/attachments/1002574979252105312/1002626521686610032/Screenshot_20220729_181827_com.huawei.browser.jpg?width=255&height=545" style="max-width:30px; max-height: 32px;">
-</picture>
+<img alt="Criar Conta Tele" src="https://cdn.discordapp.com/attachments/1002574979252105312/1002626521686610032/Screenshot_20220729_181827_com.huawei.browser.jpg?width=255&height=545" height="400px">
 
 ### Home Page
-<picture>
-  <img alt="HomePage PC" src="https://cdn.discordapp.com/attachments/1002574979252105312/1002626682093584494/Captura_de_Ecra_11.png?width=971&height=546" style="max-height: 232px;" >
-  <img alt="HomePage Tele" src="https://cdn.discordapp.com/attachments/1002574979252105312/1002626521451733133/Screenshot_20220729_181908_com.huawei.browser.jpg?width=255&height=545" style="max-height: 232px;" >
-</picture>
+<img alt="HomePage PC" src="https://cdn.discordapp.com/attachments/1002574979252105312/1002626682093584494/Captura_de_Ecra_11.png?width=971&height=546" >
+
+<img alt="HomePage Tele" src="https://cdn.discordapp.com/attachments/1002574979252105312/1002626521451733133/Screenshot_20220729_181908_com.huawei.browser.jpg?width=255&height=545" height="400px" >
 
 ### Todos os carros
-<picture>
-  <img alt="TodosCarros PC" src="https://cdn.discordapp.com/attachments/1002574979252105312/1002626682437500938/Captura_de_Ecra_12.png?width=971&height=546" style="max-height: 231px;" >
-  <img alt="TodosCarros Tele" src="https://media.discordapp.net/attachments/1002574979252105312/1002628823835213834/Screenshot_20220729_182849_com.huawei.browser.jpg?width=255&height=545" style="max-height: 231px;" >
-</picture>
+
+<img alt="TodosCarros PC" src="https://cdn.discordapp.com/attachments/1002574979252105312/1002626682437500938/Captura_de_Ecra_12.png?width=971&height=546" >
+
+<img alt="TodosCarros Tele" src="https://media.discordapp.net/attachments/1002574979252105312/1002628823835213834/Screenshot_20220729_182849_com.huawei.browser.jpg?width=255&height=545" height="400px">
+
 
 ### Adicionar Interesses
-<picture>
-  <img alt="ADDInteresse PC" src="https://cdn.discordapp.com/attachments/1002574979252105312/1002626684262035556/Captura_de_Ecra_13.png?width=971&height=546" style="max-height: 232px;" >
-  <img alt="ADDInteresse Tele" src="https://cdn.discordapp.com/attachments/1002574979252105312/1002626521183305789/Screenshot_20220729_181927_com.huawei.browser.jpg?width=255&height=545" style="max-height: 231px;" >
-</picture>
+<img alt="ADDInteresse PC" src="https://cdn.discordapp.com/attachments/1002574979252105312/1002626684262035556/Captura_de_Ecra_13.png?width=971&height=546" >
+
+<img alt="ADDInteresse Tele" src="https://cdn.discordapp.com/attachments/1002574979252105312/1002626521183305789/Screenshot_20220729_181927_com.huawei.browser.jpg?width=255&height=545" height="400px" >
 
 ### Favoritos/Novos Carros (Sem Resultados)
-<picture>
-  <img alt="Sem Resultados PC" src="https://media.discordapp.net/attachments/1002574979252105312/1002629604240007238/Captura_de_Ecra_14.png?width=971&height=546" style="max-height: 232px;" >
-  <img alt="Sem Resultados Tele" src="https://media.discordapp.net/attachments/1002574979252105312/1002629520563650650/Screenshot_20220729_183140_com.huawei.browser.jpg?width=255&height=545" style="max-height: 231px;" >
-</picture>
+<img alt="Sem Resultados PC" src="https://media.discordapp.net/attachments/1002574979252105312/1002629604240007238/Captura_de_Ecra_14.png?width=971&height=546" >
+
+<img alt="Sem Resultados Tele" src="https://media.discordapp.net/attachments/1002574979252105312/1002629520563650650/Screenshot_20220729_183140_com.huawei.browser.jpg?width=255&height=545" height="400px" >
