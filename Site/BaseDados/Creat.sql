@@ -20,8 +20,8 @@ USE `carvago` ;
 CREATE TABLE IF NOT EXISTS `carvago`.`PushInfo` (
   `idPushInfo` INT NOT NULL AUTO_INCREMENT,
   `endpoint` LONGBLOB NOT NULL,
-  `p256dh` LONGBLOB NOT NULL,
-  `auth` LONGBLOB NOT NULL,
+  `p256dh` VARCHAR(300) NOT NULL,
+  `auth` VARCHAR(300) NOT NULL,
   `expirationTime` VARCHAR(255) NULL,
   PRIMARY KEY (`idPushInfo`))
 ENGINE = InnoDB;
