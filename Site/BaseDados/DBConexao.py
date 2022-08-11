@@ -1,6 +1,6 @@
 import mysql.connector
 
-DB_HOST = 'localhost'
+DB_HOST = '127.0.0.1'
 DB_USER = 'root'
 DB_PASS = 'Pedro1234'
 DB_NAME = 'carvago'

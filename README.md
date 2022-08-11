@@ -10,7 +10,7 @@
 > Com a atualização constante dos carros existentes nas várias fontes, será possivel ficar por dentro das novidades. **Assim, a utilização do Carvago permite aos seus utilizadores o acompanhamento constante do mercado, não perdendo nenhuma novidade, tornando mais fácil encontrar o melhor negócio para os seus veículos de sonho.**
 </br>
 
-## Instalação
+## Instalação (Sem Docker)
 
 > Para utilizar a aplicação deve ter instalado:
 > - Flask (pip install Flask)
@@ -29,13 +29,30 @@
 > Por fim, basta utilizar o browser para aceder à interface criada, via HTTP.
 </br>
 
+## Instalação (Com Docker)
+
+> Para realizar à instalação do programa com o docker é necessário:
+>
+> - Ter o docker instalado e configurado
+> - O SGBD mySQL instalado e configurado. (para configurar a base de dados deve-se correr o código SQL disponibilizado [aqui](https://github.com/pVeloso19/Carvago/blob/main/Site/BaseDados/Creat.sql) responsável por criar o esquema da BD e as respetiveis tabelas. Também é disponibilizado um dockerfile para criar o container docker com a base de dados ([aqui]())
+>
+> Para executar o container docker:
+>
+> - 1º - Criar a imagem do container -> docker build -t <nome_imagem> <path_do_dockerfile>
+> - 2º - Executaro container -> docker run --name="<nome_do_container>" -p5000:5000 -d <nome_imagem_definido_no_passo_anterior>
+> - Existe algumas variaveis que se pode defenir durante a execução do container:
+>   - DATABASE_IP : Endereço IP da máquina em que a base de dados se encontra
+>   - MYSQL_DATABASE : Nome da base de dados criada
+>   - MYSQL_ROOT_PASSWORD : Palavra passe do utilizador root, para aceder à base de dados
+
 ## Resultado Final
 
 ### Página inicial (Sem Login efetuado)
+<p display="flex" align-items="stretch">
 <img src="https://cdn.discordapp.com/attachments/1002574979252105312/1002626682865340456/Captura_de_Ecra_8.png?width=971&height=546" >
 
 <img src="https://cdn.discordapp.com/attachments/1002574979252105312/1002626522122825838/Screenshot_20220729_181819_com.huawei.browser.jpg?width=255&height=545" height="400px">
-
+<p>
 ### Login/Criar conta
 <img alt="Login PC" src="https://cdn.discordapp.com/attachments/1002574979252105312/1002626683221848185/Captura_de_Ecra_9.png?width=971&height=546" >
 

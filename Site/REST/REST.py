@@ -78,10 +78,7 @@ class REST_API:
         
         @self.app.route('/<path:filename>', methods=['GET', 'POST'])
         def download(filename):
-            # Appending app path to upload folder path within app root folder
-            uploads = os.path.join(self.app.root_path, 'templates\\static')
-            # Returning file from appended path
-            return send_from_directory(directory=uploads, path=uploads, filename=filename)
+            return send_from_directory('templates/static',filename, as_attachment=True)
 
         @self.app.route('/')
         def hello():

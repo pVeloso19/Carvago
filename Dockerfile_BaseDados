@@ -1,0 +1,7 @@
+FROM mysql:latest
+#ADD DataBase
+ENV MYSQL_DATABASE carvago
+ENV MYSQL_ROOT_PASSWORD Pedro1234
+
+# Creat Tables
+COPY ./Site/BaseDados/Creat.sql /docker-entrypoint-initdb.d/
