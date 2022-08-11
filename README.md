@@ -5,9 +5,9 @@
 
 > Esta aplicação pretende possibilitar aos seus utilizadores o acompanhamento dos carros existentes para vendas em vários websites, numa única página. Assim, realiza-se um aglomerado da oferta existente e apresenta-se essa informação aos utilizadores.
 >
-> Para além disto, será possível especificar determinadas condições em que a entrada de um novo veículo, que as cumpra, notificará o utilizador.
+> Para além disto, será possível especificar determinados parâmetros utilizados para notificar o utilizador. Desta forma, sempre que se der a entrada de um novo veículo que cumpra os parâmetros indicados pelo utilizador deverá ser enviada uma notificação para o mesmo.
 >
-> Com a atualização constante dos carros existentes nas várias fontes, será possivel ficar por dentro das novidades. **Assim, a utilização do Carvago permite aos seus utilizadores o acompanhamento constante do mercado, não perdendo nenhuma novidade, tornando mais fácil encontrar o melhor negócio para os seus veículos de sonho.**
+> Com a atualização constante dos carros existentes nas várias fontes, será possivel ficar por dentro das novidades. **Assim, a utilização do Carvago permite aos seus utilizadores o acompanhamento constante do mercado, não perdendo nenhuma novidade, tornando mais fácil encontrar o melhor negócio para o seu veículo de sonho.**
 </br>
 
 ## Instalação (Sem Docker)
