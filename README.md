@@ -49,9 +49,9 @@
 
 ### Página inicial (Sem Login efetuado)
 <p display="flex" align-items="stretch">
-<img src="https://cdn.discordapp.com/attachments/1002574979252105312/1002626682865340456/Captura_de_Ecra_8.png?width=971&height=546" width="70%">
+<img src="https://media.discordapp.net/attachments/1002574979252105312/1007347621200924682/Captura_de_Ecra_8.png" width="70%">
 
-<img src="https://cdn.discordapp.com/attachments/1002574979252105312/1002626522122825838/Screenshot_20220729_181819_com.huawei.browser.jpg?width=255&height=545" height="400px">
+<img src="https://media.discordapp.net/attachments/1002574979252105312/1007348281363415130/Screenshot_20220729_181819_com.huawei.browser.jpg" height="400px">
 <p>
 
 ### Login/Criar conta
