@@ -49,16 +49,17 @@
 
 ### Página inicial (Sem Login efetuado)
 <p display="flex" align-items="stretch">
-<img src="https://cdn.discordapp.com/attachments/1002574979252105312/1002626682865340456/Captura_de_Ecra_8.png?width=971&height=546" >
+<img src="https://cdn.discordapp.com/attachments/1002574979252105312/1002626682865340456/Captura_de_Ecra_8.png?width=971&height=546" width="70%">
 
 <img src="https://cdn.discordapp.com/attachments/1002574979252105312/1002626522122825838/Screenshot_20220729_181819_com.huawei.browser.jpg?width=255&height=545" height="400px">
 <p>
+
 ### Login/Criar conta
-<img alt="Login PC" src="https://cdn.discordapp.com/attachments/1002574979252105312/1002626683221848185/Captura_de_Ecra_9.png?width=971&height=546" >
+<img alt="Login PC" src="https://cdn.discordapp.com/attachments/1002574979252105312/1002626683221848185/Captura_de_Ecra_9.png?width=971&height=546" width="70%">
 
 <img alt="Login Tele" src="https://cdn.discordapp.com/attachments/1002574979252105312/1002626521887952906/Screenshot_20220729_181822_com.huawei.browser.jpg?width=255&height=545" height="400px">
 
-<img alt="Criar Conta PC" src="https://cdn.discordapp.com/attachments/1002574979252105312/1002626683762921482/Captura_de_Ecra_10.png?width=971&height=546" >
+<img alt="Criar Conta PC" src="https://cdn.discordapp.com/attachments/1002574979252105312/1002626683762921482/Captura_de_Ecra_10.png?width=971&height=546" width="70%">
 
 <img alt="Criar Conta Tele" src="https://cdn.discordapp.com/attachments/1002574979252105312/1002626521686610032/Screenshot_20220729_181827_com.huawei.browser.jpg?width=255&height=545" height="400px">
 
