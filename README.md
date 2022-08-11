@@ -34,7 +34,7 @@
 > Para realizar à instalação do programa com o docker é necessário:
 >
 > - Ter o docker instalado e configurado
-> - O SGBD mySQL instalado e configurado. (para configurar a base de dados deve-se correr o código SQL disponibilizado [aqui](https://github.com/pVeloso19/Carvago/blob/main/Site/BaseDados/Creat.sql) responsável por criar o esquema da BD e as respetiveis tabelas. Também é disponibilizado um dockerfile para criar o container docker com a base de dados ([aqui]())
+> - O SGBD mySQL instalado e configurado. (para configurar a base de dados deve-se correr o código SQL disponibilizado [aqui](https://github.com/pVeloso19/Carvago/blob/main/Site/BaseDados/Creat.sql) responsável por criar o esquema da BD e as respetiveis tabelas. Também é disponibilizado um dockerfile para criar o container docker com a base de dados ([aqui](https://github.com/pVeloso19/Carvago/blob/main/Dockerfile_BaseDados))
 >
 > Para executar o container docker:
 >
