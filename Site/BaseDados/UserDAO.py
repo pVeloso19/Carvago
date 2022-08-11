@@ -276,7 +276,7 @@ class UserDAO:
         return res
     
     def getTokenUser(self, id_user : int) -> dict:
-        connection, cursor = connectToDB()
+        _, cursor = connectToDB()
 
         query = """
             SELECT endpoint, p256dh, auth, expirationTime FROM carvago.PushInfo as p
@@ -287,14 +287,14 @@ class UserDAO:
         cursor.execute(query)
         r = cursor.fetchone()
         
-        res = None
+        temp = None
         if (r is not None):
-            res = {}
-            res['endpoint'] = r[0]
-            res['expirationTime'] = None if r[3] == 'NULL' else r[3]
             temp = {}
-            temp['p256dh'] = r[1]
-            temp['auth'] = r[2]
-            res['keys'] = temp
+
+            temp["endpoint"] = r[0].decode()
+            temp["expirationTime"] = None if r[3] == 'NULL' else r[3] 
+            temp["keys"] = {} 
+            temp["keys"]["p256dh"] = r[1]
+            temp["keys"]["auth"] = r[2]
         
-        return res
+        return temp

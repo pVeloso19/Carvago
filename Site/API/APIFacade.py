@@ -3,10 +3,17 @@ from API.OlxFont import OLXGather
 from Users.UserFacade import UserFacade
 
 import time
+from pywebpush import webpush
+import json, os
 
 class APIFacade:
     def __init__(self):
-        pass
+        DER_BASE64_ENCODED_PRIVATE_KEY_FILE_PATH = os.path.join(os.getcwd(),"private_key.txt")
+        
+        self.VAPID_PRIVATE_KEY = open(DER_BASE64_ENCODED_PRIVATE_KEY_FILE_PATH, "r+").readline().strip("\n")
+        self.VAPID_CLAIMS = {
+            "sub": "mailto:develop@raturi.in"
+        }
 
     def getDados(self):
         #Inicia todas as fontes
@@ -31,11 +38,28 @@ class APIFacade:
                 id_carros_vendidos.extend(vendidos)
             time.sleep(60*5)
 
-        #Faz algo com os carros novos
-        print('novos = [', end=' ,')
-        for carro in carros_novos:
-            print(carro.getID(), end=' ,')
-        print(']\n')
+        #Faz algo com os carros novos (var carros_novos)
+        ids_users_notificar = [9]
 
-        # faz algo com os carros que foram vendidos
-        print("vendidos = "+str(id_carros_vendidos) )
+        for id_user in ids_users_notificar:
+            message = "Existe um novo carro do seu interesse disponivel."
+
+            temp = userFacade.getTokenUser(id_user)
+
+            if (temp is None):
+                pass
+            else:
+                token = json.dumps(temp)
+                try:
+                    token = json.loads(token)
+                    webpush(
+                        subscription_info=token,
+                        data=message,
+                        vapid_private_key=self.VAPID_PRIVATE_KEY,
+                        vapid_claims=self.VAPID_CLAIMS
+                    )
+                except Exception as e:
+                    print("error", e)
+
+        # faz algo com os carros que foram vendidos?
+        #print("vendidos = "+str(id_carros_vendidos) )

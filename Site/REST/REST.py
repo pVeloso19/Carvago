@@ -1,6 +1,5 @@
 from flask import Flask, request, Response, jsonify, render_template, send_from_directory
-from flask_cors import CORS, cross_origin
-#@cross_origin(origin='*',headers=['Content-Type','Authorization'])
+from flask_cors import cross_origin
 
 from pywebpush import webpush
 
@@ -14,28 +13,24 @@ class REST_API:
     def __init__(self):
         self.app = Flask(__name__)
         
-        self.cors = CORS(self.app, resources={r"/foo": {"origins": "*"}})
-        self.app.config['CORS_HEADERS'] = 'Content-Type'
-        
-        self.app.config['SECRET_KEY'] = '9OLWxND4o83j4K4iuopO'
         self.app.config['JSON_AS_ASCII'] = False
 
         self.__carrosFacade = CarrosFacade()
         self.__userFacade = UserFacade()
 
-        self.DER_BASE64_ENCODED_PRIVATE_KEY_FILE_PATH = os.path.join(os.getcwd(),"private_key.txt")
-        self.DER_BASE64_ENCODED_PUBLIC_KEY_FILE_PATH = os.path.join(os.getcwd(),"public_key.txt")
+        DER_BASE64_ENCODED_PRIVATE_KEY_FILE_PATH = os.path.join(os.getcwd(),"private_key.txt")
+        DER_BASE64_ENCODED_PUBLIC_KEY_FILE_PATH = os.path.join(os.getcwd(),"public_key.txt")
 
-        self.VAPID_PRIVATE_KEY = open(self.DER_BASE64_ENCODED_PRIVATE_KEY_FILE_PATH, "r+").readline().strip("\n")
-        self.VAPID_PUBLIC_KEY = open(self.DER_BASE64_ENCODED_PUBLIC_KEY_FILE_PATH, "r+").read().strip("\n")
+        self.VAPID_PRIVATE_KEY = open(DER_BASE64_ENCODED_PRIVATE_KEY_FILE_PATH, "r+").readline().strip("\n")
+        self.VAPID_PUBLIC_KEY = open(DER_BASE64_ENCODED_PUBLIC_KEY_FILE_PATH, "r+").read().strip("\n")
 
         self.VAPID_CLAIMS = {
             "sub": "mailto:develop@raturi.in"
         }
 
-    def init(self):
+    def init(self, port=5000):
         self.define_PATH()
-        self.app.run(debug=True, host='0.0.0.0', port=5000)
+        self.app.run(debug=True, host='0.0.0.0', port=port)
 
     def define_PATH(self):
         
@@ -269,8 +264,6 @@ class REST_API:
             marca = '' if(marca == '') else split(',', marca)
             combustivel = '' if(combustivel == '') else split(',', combustivel)
 
-            print(marca)
-
             filtro = FiltrosNotificacoes(
                 -1, 
                 request.args.get('AnoMinimo'), 
@@ -291,18 +284,18 @@ class REST_API:
 
         @self.app.route("/push", methods=['POST'])
         @cross_origin(origin='*',headers=['Content-Type','Authorization'])
-        def push():
-            message = "Novo carro disponivel!!!"
+        def push_v1():
+
+            message = "Push Test"
 
             id_user = int(request.args.get('ID'))
+            temp = self.__userFacade.getTokenUser(id_user)
+
+            token = json.dumps(temp)
             
-            token = self.__userFacade.getTokenUser(id_user)
-
-            if (token is None):
-                return jsonify({'failed':str(e)})
-
             try:
-                _ = webpush(
+                token = json.loads(token)
+                webpush(
                     subscription_info=token,
                     data=message,
                     vapid_private_key=self.VAPID_PRIVATE_KEY,
